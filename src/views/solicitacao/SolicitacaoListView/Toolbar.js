@@ -1,0 +1,123 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  InputAdornment,
+  SvgIcon,
+  makeStyles,
+  Grid
+} from '@material-ui/core';
+import { Search as SearchIcon } from 'react-feather';
+import {  useNavigate, useParams } from 'react-router-dom';
+
+const useStyles = makeStyles((theme) => ({
+  root: {},
+  importButton: {
+    marginRight: theme.spacing(1)
+  },
+  exportButton: {
+    marginRight: theme.spacing(1)
+  }
+}));
+
+const Toolbar = ({ className, contratoId, unidadeId, clinicaId, refeicao, dataReferencia, ...rest }) => {
+  const classes = useStyles();
+  
+  const navigate = useNavigate();
+
+  const handleClick = (() => {
+    var url = '/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + refeicao + '/' + dataReferencia + '/form';
+    navigate(url, {});
+  });
+
+  const handleClickGoBack = (() => {
+    navigate('/app/solicitacoes', {});
+  });
+
+  return (
+    <div
+      className={clsx(classes.root, className)}
+      {...rest}
+    >
+      <Card>
+        <CardContent>
+        <Grid
+            container
+            spacing={3}
+            direction="row">
+          <Grid
+            item
+            md={2}
+            xs={6}>
+            <Button
+              fullWidth
+              color="primary"
+              variant="contained"
+              onClick={handleClick}
+              >
+              Novo
+            </Button>
+          </Grid>
+          <Grid
+            item
+            md={2}
+            xs={6}>
+            <Button
+              fullWidth
+              color="primary"
+              variant="contained"
+              onClick={handleClickGoBack}
+              >
+              Voltar
+            </Button>
+          </Grid>
+        </Grid>
+        </CardContent>
+      </Card>
+        
+
+
+      
+      
+      {
+        /*
+      <Box mt={3}>
+        <Card>
+          <CardContent>
+            <Box maxWidth={500}>
+              <TextField
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon
+                        fontSize="small"
+                        color="action"
+                      >
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  )
+                }}
+                placeholder="Localizar usuário"
+                variant="outlined"
+              />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+              */}
+    </div>
+  );
+};
+
+Toolbar.propTypes = {
+  className: PropTypes.string
+};
+
+export default Toolbar;
