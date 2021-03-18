@@ -27,5 +27,15 @@ export default {
       'headers' : {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
+    }),
+  alteraSenha: (data, usuarioId) =>
+    instance({
+      'method': 'POST',
+      'url': '/usuarios/altsenha/' + usuarioId,
+      'data': data,
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : ''),
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      }
     })
 }

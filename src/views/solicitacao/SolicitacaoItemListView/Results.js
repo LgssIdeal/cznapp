@@ -20,9 +20,10 @@ import {
   CardHeader,
   CardContent,
   Grid,
-  Button
+  Button,
+  Icon
 } from '@material-ui/core';
-import {Edit, FormatListNumbered} from '@material-ui/icons'
+import {Edit, Delete} from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
@@ -60,6 +61,12 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   map.set("LANCHE_2", "Lanche 2");
   map.set("JANTAR", "Jantar");
   map.set("CEIA", "Ceia");
+
+  const mapTipoId = new Map();
+  mapTipoId.set("RG", "Rg");
+  mapTipoId.set("CPF", "Cpf");
+  mapTipoId.set("CARTAO_SUS", "Nro. SUS");
+  mapTipoId.set("OUTRO", "Outro");
 
   
   const handleAlterMapa = (mapaId) => {
@@ -162,10 +169,19 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                     Leito
                   </StyledTableCell>
                   <StyledTableCell>
+                    Tipo Ident.
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    Identificação
+                  </StyledTableCell>
+                  <StyledTableCell>
                     Paciente
                   </StyledTableCell>
                   <StyledTableCell>
                     Dieta
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    Ações
                   </StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -200,10 +216,22 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                       {item.leito}
                     </TableCell>
                     <TableCell>
+                      {mapTipoId.get(item.tipoIdentificacao)}
+                    </TableCell>
+                    <TableCell>
+                      {item.identificacao}
+                    </TableCell>
+                    <TableCell>
                       {item.paciente}
                     </TableCell>
                     <TableCell>
                       {item.tipoDieta && item.tipoDieta.sigla}{item.tipoDietaComplementar && '/' + item.tipoDietaComplementar.sigla }
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <IconButton><Edit color="primary"/></IconButton>
+                        <IconButton><Delete /></IconButton>
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))}

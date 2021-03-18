@@ -47,7 +47,7 @@ const routes = [
       { path: 'customers', element: <CustomerListView /> },
       { path: 'dashboard', element: <DashboardView /> },
       { path: 'products', element: <ProductListView /> },
-      { path: 'settings', element: <SettingsView /> },
+      { path: 'configuracoes', element: <SettingsView /> },
       { path: 'usuarios', element: <UserListView /> },
       { path: 'empresas', element: <EmpresaListView /> },
       { path: 'contratos', element: <ContratoListView /> },

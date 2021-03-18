@@ -21,28 +21,8 @@ const useStyles = makeStyles((theme) => ({
 const TipoDietaFormView = () => {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState("");
-  const nTipoDieta = {
-    id : '',
-    descricao : '',
-    sigla : ''
-  }
-
-  const[tipoDietaSel, setTipoDietaSel] = useState(nTipoDieta);
   
   let {tipoDietaId}  = useParams();
-
-  useEffect(() => {
-    
-    TipoDietaService.getTipoDieta(tipoDietaId)
-      .then((result) => {
-        setTipoDietaSel(result.data);
-      })
-      .catch((error) => {
-        setErrorMsg(error.data)
-      });
-    
-        
-  }, [tipoDietaSel]);
 
   return (
     <Page
@@ -60,7 +40,7 @@ const TipoDietaFormView = () => {
             md={6}
             xs={12}
           >
-            <ProfileDetails tipoDieta={tipoDietaSel}/>
+            <ProfileDetails tipoDieta={tipoDietaId}/>
           </Grid>
         </Grid>
       </Container>

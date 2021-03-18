@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -75,6 +75,11 @@ const items = [
     title: 'Solicitações'
   },
   {
+    href: '/app/configuracoes',
+    icon: SettingsIcon,
+    title: 'Configurações'
+  },
+  {
     href: '/app/sobre',
     icon: InfoIcon,
     title: 'Sobre'
@@ -108,6 +113,8 @@ const NavBar = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
+  const [invalidToken, setInvalidToken] = useState(false);
+
 
   const map = new Map();
   map.set("ADMINISTRADOR", "Administrador");
@@ -117,8 +124,8 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
   const user = {
     avatar: '/static/images/avatars/avatar_6.png',
-    jobTitle: map.get(JSON.parse(localStorage.getItem("@app-user")).perfil),
-    name: JSON.parse(localStorage.getItem("@app-user")).nome
+    jobTitle: (localStorage.getItem("@app-user") !== null ? map.get(JSON.parse(localStorage.getItem("@app-user")).perfil) : ''),
+    name: (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).nome : '')
   };
 
   useEffect(() => {
@@ -127,6 +134,20 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  useEffect(() => {
+    if(localStorage.getItem("@app-user") === null) {
+      setInvalidToken(true);
+    } else {
+      setInvalidToken(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if(invalidToken) {
+      navigate("/", {replace: true});
+    }
+  }, [invalidToken]);
 
   
   const content = (
@@ -145,7 +166,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
           className={classes.avatar}
           component={RouterLink}
           src={'https://www.gravatar.com/avatar/default?s=200&r=pg&d=mm'}
-          to="/app/account"
+          to="/app/dashboard"
         />
         <Typography
           className={classes.name}

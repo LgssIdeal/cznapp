@@ -28,18 +28,52 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
   const classes = useStyles();
   const [error, setError] = useState("")
   const [values, setValues] = useState({
-    id: tipoDieta.id,
-    descricao: tipoDieta.descricao,
-    sigla: tipoDieta.sigla
+    id: '',
+    descricao: '',
+    sigla: ''
   });
+  const [invalidToken, setInvalidToken] = useState(false);
 
   useEffect(() => {
-    setValues({
-      id: tipoDieta.id,
-      descricao: tipoDieta.descricao,
-      sigla: tipoDieta.sigla
-    });    
-  }, [tipoDieta]);
+    TipoDietaService.getTipoDieta(tipoDieta)
+      .then((result) => {
+        setValues({
+          id: result.data.id,
+          descricao: result.data.descricao,
+          sigla: result.data.sigla
+        });
+      })
+      .catch((error) => {
+        if(error.response.data) {
+          setError(error.response.data.detail);
+        } else {
+          var e = JSON.stringify(error);
+          if(e.includes("404")) {
+            setValues({
+              id: '',
+              descricao: '',
+              sigla: ''
+            });
+          } else {
+            if(e.includes("401")) {
+              setInvalidToken(true);
+            } else {
+              setError(e);
+            }
+          }
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      });
+      
+  }, []);
+
+  useEffect(() => {
+    if(invalidToken) {
+      navigate("/", {replace: true});
+    }
+  }, [invalidToken])
 
   const handleChange = (event) => {
     setValues({
