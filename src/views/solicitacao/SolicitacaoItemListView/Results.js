@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeicao, dataReferencia, solicitacaoId, ...rest }) => {
+const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, dataReferencia, solicitacaoId, ...rest }) => {
   
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
@@ -125,7 +125,11 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   },[isTokenExpired]);
 
   const handleGoBack = () => {
-    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + refeicao + '/' + dataReferencia, {replace : true});
+    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia, {replace : true});
+  }
+
+  const handleUpdateItem = (solicitacaoItemId) => {
+    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/' + solicitacaoId + '/' + solicitacaoItemId, {replace: true});
   }
 
   const StyledTableCell = withStyles((theme) => ({
@@ -169,16 +173,13 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                     Leito
                   </StyledTableCell>
                   <StyledTableCell>
-                    Tipo Ident.
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    Identificação
-                  </StyledTableCell>
-                  <StyledTableCell>
                     Paciente
                   </StyledTableCell>
                   <StyledTableCell>
                     Dieta
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    Observações
                   </StyledTableCell>
                   <StyledTableCell>
                     Ações
@@ -195,8 +196,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                         alignItems="center"
                         display="flex"
                       >
-                        
-                          {format(
+                        {format(
                             zonedTimeToUtc(
                             item.dataCriacao, 
                           'America/Sao_Paulo'), "dd/MM/yyyy HH:mm:ss")}
@@ -213,24 +213,24 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                       {map.get(item.refeicao)}
                     </TableCell>
                     <TableCell>
-                      {item.leito}
-                    </TableCell>
-                    <TableCell>
-                      {mapTipoId.get(item.tipoIdentificacao)}
-                    </TableCell>
-                    <TableCell>
-                      {item.identificacao}
+                      {item.leito === '9999' ? '' : item.leito}
                     </TableCell>
                     <TableCell>
                       {item.paciente}
                     </TableCell>
                     <TableCell>
-                      {item.tipoDieta && item.tipoDieta.sigla}{item.tipoDietaComplementar && '/' + item.tipoDietaComplementar.sigla }
+                      {item.tipoDieta && item.tipoDieta.sigla}
+                      {item.tiposDietaComplementar && item.tiposDietaComplementar.map(tp => (
+                        ' ' + tp.sigla
+                      ))}
+                    </TableCell>
+                    <TableCell>
+                      {item.observacoes}
                     </TableCell>
                     <TableCell>
                       <Typography>
-                        <IconButton><Edit color="primary"/></IconButton>
-                        <IconButton><Delete /></IconButton>
+                        <IconButton onClick={(event) => {handleUpdateItem(item.id)}}><Edit color="primary" /></IconButton>
+                        <IconButton><Delete color="secondary"/></IconButton>
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -239,11 +239,21 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
             </Table>
           </Box>
         </PerfectScrollbar>
-        <Grid container spacing={3}>
-            <Grid item md={12} xs={12}>
+        <Grid container spacing={3} direction="row">
+            <Grid item md={2} xs={6}>
               <Button
                   fullWidth
                   color="primary"
+                  variant="contained"
+                  onClick={handleGoBack}
+                  disabled={loading}>
+                  Novo
+              </Button>
+            </Grid>
+            <Grid item md={2} xs={6}>
+              <Button
+                  fullWidth
+                  color="secondary"
                   variant="contained"
                   onClick={handleGoBack}
                   disabled={loading}>

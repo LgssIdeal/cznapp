@@ -25,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, contratoId, unidadeId, clinicaId, refeicao, dataReferencia, ...rest }) => {
+const Toolbar = ({ className, contratoId, unidadeId, clinicaId, dataReferencia, ...rest }) => {
   const classes = useStyles();
   
   const navigate = useNavigate();
 
   const handleClick = (() => {
-    var url = '/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + refeicao + '/' + dataReferencia + '/form';
+    var url = '/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/form';
     navigate(url, {});
   });
 

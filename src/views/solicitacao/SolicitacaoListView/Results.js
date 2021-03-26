@@ -18,7 +18,7 @@ import {
   IconButton,
   LinearProgress
 } from '@material-ui/core';
-import {List, ListAlt} from '@material-ui/icons'
+import {List, ListAlt, Details, Search, SearchRounded, SearchOutlined, SearchTwoTone} from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles';
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
@@ -39,7 +39,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(20);
   const [page, setPage] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [isTokenExpired, setTokenExpired] = useState(false);
@@ -71,11 +71,10 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
     navigate('/app/solicitacoes/' + contratoId + '/' + 
                                     unidadeId + '/' + 
                                     clinicaId + '/' + 
-                                    refeicao + '/' +
                                     dataReferencia + '/' + solicitacaoId, {replace : true});
   }
 
-  const handleShowResumo = (solicitacaoId) => {
+  const handleShowResumo = (solicitacaoId, refeicao) => {
     navigate('/app/solicitacoes/' + contratoId + '/' + 
                                     unidadeId + '/' + 
                                     clinicaId + '/' + 
@@ -90,7 +89,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
     console.log("Page: ", (page + 1));
     console.log("Size: ", limit);
     setLoading(true);
-    SolicitacaoService.getSolicitacoes(contratoId, unidadeId, clinicaId, refeicao, dataReferencia, (page + 1), limit)
+    SolicitacaoService.getSolicitacoes(contratoId, unidadeId, clinicaId, dataReferencia, (page + 1), limit)
       .then((result) => {
         setLoading(false);
         setLpageable(result.data);
@@ -195,13 +194,13 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                   <TableCell>
                     <Typography>
                       <IconButton
-                        title="Visualizar soliciação no mapa"
+                        title="Visualizar solicitações detalhadas"
                         onClick={(event) => handleAlterMapa(solicitacao.id)}>
-                        <List color="primary" />
+                        <Search color="primary" />
                       </IconButton>
                       <IconButton
-                        title="Visualizar soliciação no mapa"
-                        onClick={(event) => handleShowResumo(solicitacao.id)}>
+                        title="Visualizar resumo"
+                        onClick={(event) => handleShowResumo(solicitacao.id, solicitacao.refeicao)}>
                         <ListAlt color="primary" />
                       </IconButton>
                     </Typography>

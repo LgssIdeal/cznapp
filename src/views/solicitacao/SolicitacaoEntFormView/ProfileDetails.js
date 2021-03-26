@@ -124,9 +124,8 @@ const ProfileDetails = ({ className, ...rest }) => {
     setCookie('solicContratoSel',   values.contrato, {path: '/', maxAge: expires});
     setCookie('solicUnidadeSel',    values.unidade,  {path: '/', maxAge: expires});
     setCookie('solicClinicaSel',    values.clinica,  {path: '/', maxAge: expires});
-    setCookie('solicRefeicaoSel',   values.refeicao, {path: '/', maxAge: expires});
     setCookie('solicDataReferencia',values.dataReferencia, {path: '/', maxAge: expires});
-    navigate('/app/solicitacoes/' + values.contrato + '/' + values.unidade + '/' + values.clinica + '/' + values.refeicao + '/' + values.dataReferencia, {replace: true});
+    navigate('/app/solicitacoes/' + values.contrato + '/' + values.unidade + '/' + values.clinica + '/' + values.dataReferencia, {replace: true});
   });
 
   return (
@@ -215,30 +214,7 @@ const ProfileDetails = ({ className, ...rest }) => {
             <Grid item md={12} xs={12}>
               <TextField
                 fullWidth
-                label="Refeição"
-                name="refeicao"
-                required
-                
-                onChange={handleChange}
-                value={values.refeicao}
-                variant="outlined"
-                select
-                SelectProps={{ native: true }}
-              >
-                <option value={0}></option>
-                {
-                  refeicoes.map((option) =>(
-                    <option key={option.id} value={option.id}>{option.value}  </option>
-                  ))
-                }
-              </TextField>
-            </Grid>
-
-            <Grid item md={12} xs={12}>
-              <TextField
-                fullWidth
                 name="dataReferencia"
-                label="Data de referência"
                 helperText="Data de referência"
                 required
                 type="date"

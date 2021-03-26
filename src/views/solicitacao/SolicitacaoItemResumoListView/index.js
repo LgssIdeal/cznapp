@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SolicitacaoItemListView = () => {
+const SolicitacaoItemResumoListView = () => {
   let {contratoId, unidadeId, clinicaId, refeicao, dataReferencia, solicitacaoId}  = useParams();
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState("");
@@ -37,4 +37,4 @@ const SolicitacaoItemListView = () => {
   );
 };
 
-export default SolicitacaoItemListView;
+export default SolicitacaoItemResumoListView;

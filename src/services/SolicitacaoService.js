@@ -8,7 +8,7 @@ const instance = axios.create( {
 });
 
 export default {
-  getSolicitacoes: (contratoId, unidadeId, clinicaId, refeicao, dataReferencia, page, size) => 
+  getSolicitacoes: (contratoId, unidadeId, clinicaId, dataReferencia, page, size) => 
     instance({
       'method' : 'GET',
       'url' : '/solicitacoes', 
@@ -16,7 +16,6 @@ export default {
         'contratoId': contratoId,
         'unidadeId': unidadeId,
         'clinicaId': clinicaId,
-        'refeicao': refeicao,
         'dataReferencia': dataReferencia,
         'pageNumber' : page,
         'pageSize' : size
@@ -47,6 +46,40 @@ export default {
       'method': 'GET',
       'url': '/solicitacaoitens/solicitacao/' + solicitacaoId + '/resumo',
       'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
+  getRefeicoesDisponiveis: (dataReferencia) =>
+    instance({
+      'method': 'GET',
+      'url': '/solicitacoes/refeicoesdisponiveis/' + dataReferencia,
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
+  getSolicitacaoItem: (solicitacaoItemId) =>
+    instance({
+      'method': 'GET',
+      'url': '/solicitacaoitens/' + solicitacaoItemId,
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
+  getSolicitacao: (solicitacaoId) => 
+    instance({
+      'method': 'GET',
+      'url': '/solicitacoes/' + solicitacaoId,
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
+  gravaItem: (data) =>
+    instance({
+      'method': 'POST',
+      'url': '/solicitacaoitens',
+      'data': data,
+      'headers' : {
+        'Content-Type' : 'application/x-www-form-urlencoded',
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
     })

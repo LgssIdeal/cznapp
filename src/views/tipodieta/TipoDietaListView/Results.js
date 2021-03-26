@@ -268,12 +268,12 @@ const Results = ({ className, pageable, ...rest }) => {
                         <Edit color="primary" />
                       </IconButton>
                       <IconButton
-                        title="Excluir tipo de dieta" color="secondary"
+                        title="Excluir tipo de dieta" color="primary"
                         onClick={(event) => handleDeleteTipoDieta(tipoDieta.id)}>
                           <Delete />
                       </IconButton>
                       <IconButton
-                        title="Complementos" color="secondary"
+                        title="Complementos" color="primary"
                         onClick={(event) => handleGoToComplementos(tipoDieta.id)}>
                           <Dehaze />
                       </IconButton>

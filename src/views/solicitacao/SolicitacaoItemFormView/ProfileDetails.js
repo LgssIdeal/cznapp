@@ -22,9 +22,11 @@ import {
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Alert} from '@material-ui/lab';
 import MapaService from '../../../services/MapaService';
+import SolicitacaoService from '../../../services/SolicitacaoService';
 import TipoDietaService from '../../../services/TipoDietaService';
 import TipoDietaComplementarService from '../../../services/TipoDietaComplementarService';
 import moment from 'moment';
+import data from '../../product/ProductListView/data';
 
 const listIdentificacao = [
   {
@@ -46,7 +48,7 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
+const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, dataReferencia, solicitacaoId, solicitacaoItemId, ...rest }) => {
 
   const navigate = useNavigate();
   const classes = useStyles();
@@ -54,6 +56,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   const [error, setError] = useState("")
   const [tiposDieta, setTiposDieta] = useState([]);
   const [tiposDietaComp, setTiposDietaComp] = useState([]);
+  const [solicitacao, setSolicitacao] = useState();
+  const [invalidToken, setInvalidToken] = useState(true);
   const [mapaSel, setMapaSel] = useState({
     id: 0,
     clinica: clinicaId,
@@ -68,21 +72,39 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     observacoes: ''
   });
 
+  const [solicitacaoItemSel, setSolicitacaoItemSel] = useState({
+    id: 0,
+    dataReferencia: '',
+    dataCriacao: '',
+    refeicao: '',
+    valor: 0.0,
+    paciente: '',
+    tipoIdentificacao: '',
+    identificacao: '',
+    leito: '',
+    tipoDieta: 0,
+    tiposDietaComplementar: [],
+    observacoes: '',
+    mapaId: 0
+  });
+
   const userId = JSON.parse(localStorage.getItem("@app-user")).id;
   //const [values, setValues] = useState();
   
   const [values, setValues] = useState({
     id: 0,
-    clinica: clinicaId,
-    leito: '',
+    dataReferencia: '',
+    dataCriacao: '',
+    refeicao: '',
+    valor: 0.0,
     paciente: '',
-    dataNascimento: '',
-    tipoIdenticacao: '',
+    tipoIdentificacao: '',
     identificacao: '',
+    leito: '',
     tipoDieta: 0,
     tiposDietaComplementar: [],
-    dieta: '',
-    observacoes: ''
+    observacoes: '',
+    mapaId: 0
   });
 
   /* Utilizado para os checkbox dinâmicos para seleção das dietas complementares
@@ -101,52 +123,67 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   /**********************************************/
 
   useEffect(() => {
-    MapaService.getMapa(mapaId)
+    setLoading(true);
+    SolicitacaoService.getSolicitacaoItem(solicitacaoItemId)
       .then((result) => {
-        setMapaSel(result.data);
+        setSolicitacaoItemSel(result.data);
       })
       .catch((error) => {
-        if(error.response.data) {
-          if(error.response.data.status !== 404) {
-            setError(error.response.data.detail);
-          } else {
-            setValues({
-              id: 0,
-              clinica: clinicaId,
-              leito: '',
-              paciente: '',
-              dataNascimento: '1900-01-01',
-              tipoIdentificacao: '',
-              identificacao: '',
-              tipoDieta: 0,
-              tiposDietaComplementar: [],
-              dieta: '',
-              observacoes: ''
-            });
-          }
+        if(error.response) {
+          setError(error.reponse.data.detail);
         } else {
-          setError(error.message);
+          var e = JSON.stringify(error);
+          if(e.includes("401")) {
+            setInvalidToken(true);
+          } else {
+            setError(e);
+          }
         }
-          
-      });
-  },[mapaId])
+      })
+      .finally(() => setLoading(false));
+  },[solicitacaoItemId])
 
   useEffect(() => {
     setLoading(true);
-    var dataNasc = moment(mapaSel.dataNascimento).format("YYYY-MM-DD");
+    SolicitacaoService.getSolicitacao(solicitacaoId)
+      .then((result) => {
+        setSolicitacao(result.data);
+      })
+      .catch((error) => {
+        if(error.response) {
+          setError(error.reponse.data.detail);
+        } else {
+          var e = JSON.stringify(error);
+          if(e.includes("401")) {
+            setInvalidToken(true);
+          } else {
+            setError(e);
+          }
+        }
+      })
+      .finally(() => setLoading(false));
+  },[solicitacaoId])
+
+  useEffect(() => {
+    setLoading(true);
+
+    var dataNasc = moment(solicitacaoItemSel.dataNascimento).format("YYYY-MM-DD");
     
     setValues({
-      id: mapaSel.id,
-      clinica: clinicaId,
-      leito: mapaSel.leito,
-      paciente: mapaSel.paciente,
+      id: solicitacaoItemSel.id,
       dataNascimento: dataNasc,
-      tipoIdentificacao: mapaSel.tipoIdentificacao,
-      identificacao: mapaSel.identificacao,
-      tipoDieta: mapaSel.tipoDieta.id,
-      tiposDietaComplementar: mapaSel.tiposDietaComplementar.length > 0 ? mapaSel.tipoDietaComplementar : [],
-      dieta: mapaSel.dieta,
-      observacoes: mapaSel.observacoes
+      dataReferencia: solicitacaoItemSel.dataReferencia,
+      dataCriacao: solicitacaoItemSel.dataCriacao,
+      refeicao: solicitacaoItemSel.refeicao,
+      valor: solicitacaoItemSel.valor,
+      paciente: solicitacaoItemSel.paciente,
+      tipoIdentificacao: solicitacaoItemSel.tipoIdentificacao,
+      identificacao: solicitacaoItemSel.identificacao,
+      leito: solicitacaoItemSel.leito,
+      tipoDieta: solicitacaoItemSel.tipoDieta.id,
+      tiposDietaComplementar: solicitacaoItemSel.tiposDietaComplementar.length > 0 ? solicitacaoItemSel.tipoDietaComplementar : [],
+      observacoes: solicitacaoItemSel.observacoes,
+      mapaId: solicitacaoItemSel.mapaId
     });
 
     TipoDietaService.getTiposDietaList()
@@ -166,7 +203,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
         }
       });
     
-  }, [mapaSel]);
+  }, [solicitacaoItemSel]);
 
   useEffect(() => {
     if(values.tipoDieta) {
@@ -257,7 +294,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
 
 
   const handleGoBack = (() => {
-    navigate('/app/mapas/' + clinicaId, {replace : true});
+    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/' + solicitacaoId, {replace : true});
   });
 
   const handleSubmit = ( () => {
@@ -274,40 +311,51 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       }
     }
 
-    console.log(tpCompSel);
-
     const params = new URLSearchParams();
-    params.append('mapaId', values.id);
-    params.append('clinicaId', values.clinica);
-    params.append('leito', values.leito);
-    params.append('paciente', values.paciente);
-    params.append('dataNascimento', values.dataNascimento);
-    params.append('tipoIdentificacao', values.tipoIdentificacao);
-    params.append('identificacao', values.identificacao);
-    params.append('tipoDietaId', values.tipoDieta);
-    params.append('tiposDietaComplemetarId', tpCompSel);
-    params.append('observacoes', values.observacoes);
-    params.append('usuarioId', userId);
+    
+    params.append('id', values.id);
+		params.append('solicitacaoId', solicitacaoId);
+		params.append('referencia', dataReferencia);
+		params.append('leito', values.leito);
+		params.append('paciente', values.paciente);
+		params.append('dataNascimento', values.dataNascimento);
+		params.append('tipoIdentificacao', values.tipoIdentificacao);
+		params.append('identificacao', values.identificacao);
+		params.append('refeicao', solicitacao.refeicao);
+		params.append('tipoDieta', values.tipoDieta);
+		params.append('tiposDietaComplementar', tpCompSel);
+		params.append('observacoes', values.observacoes);
+		params.append('mapaId', solicitacaoItemSel.mapaId === null ? 0 : solicitacaoItemSel.mapaId);
+		params.append('clinicaId', clinicaId);
+		params.append('usuarioId', userId);
+    
 
-    MapaService.criaMapa(params)
-      .then((result) => {
-        alert("Alteração gravada com sucesso");
-        setLoading(false);
-        navigate("/app/mapas/" + clinicaId, {});
+    
+    SolicitacaoService.gravaItem(params)
+      .then(() => {
+        alert("Solicitação gravada com sucesso");
+        navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/' + solicitacaoId, {replace : true});
       })
       .catch((error) => {
-        setLoading(false);
+        console.log("Passo", 1);
+        console.log("Error", error.response);
         if(error.response.data) {
+          console.log("Passo", 2);
           setError(error.response.data.detail);
         } else {
-          if(JSON.stringify(error).includes("401")) {
-            navigate("/",{});
+          console.log("Passo", 3);
+          var e = JSON.stringify(error);
+          if(e.includes("401")) {
+            console.log("Passo", 4);
+            navigate("/", {});
           } else {
-            setError(JSON.stringify(error));
+            console.log("Passo", 5);
+            
+            setError(e);            
           }
         }
-      });
-    
+      })
+      .finally(() => setLoading(false));
     
   });
 
@@ -460,28 +508,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
               md={12}
               xs={12}
             >
-              {/* 
-              <TextField
-                fullWidth
-                label="Complemento"
-                name="tipoDietaComplementar"
-                required
-                helperText="Informe complemento"
-                onChange={handleChange}
-                value={values.tipoDietaComplementar}
-                variant="outlined"
-                select
-                SelectProps={{ native: true }}
-              >
-                <option key={0} value={0}></option>
-                {
-                  tiposDietaComp.map((option) =>(
-                    <option key={option.id} value={option.id}>{option.sigla}</option>
-                  ))
-                }
-              </TextField>
-            */}
-                
+              
             <FormControl component="fieldset" variant="standard">
               <FormLabel component="legend" >Complementação de dieta</FormLabel>
               <FormGroup row>

@@ -117,7 +117,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   },[isTokenExpired]);
 
   const handleGoBack = () => {
-    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + refeicao + '/' + dataReferencia, {replace : true});
+    navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia, {replace : true});
   }
 
   const StyledTableCell = withStyles((theme) => ({
@@ -192,10 +192,10 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
           </Box>
         </PerfectScrollbar>
         <Grid container spacing={3}>
-          <Grid item md={12} xs={12}>
+          <Grid item md={2} xs={12}>
             <Button
                 fullWidth
-                color="primary"
+                color="secondary"
                 variant="contained"
                 onClick={handleGoBack}
                 disabled={loading}>

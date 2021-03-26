@@ -37,6 +37,7 @@ import SolicitacaoListView from './views/solicitacao/SolicitacaoListView';
 import SolicitacaoFormView from './views/solicitacao/SolicitacaoFormView';
 import SolicitacaoItemListView from './views/solicitacao/SolicitacaoItemListView';
 import SolicitacaoItemResumoListView from './views/solicitacao/SolicitacaoItemResumoListView';
+import SolicitacaoItemFormView from './views/solicitacao/SolicitacaoItemFormView';
 
 const routes = [
   {
@@ -70,10 +71,11 @@ const routes = [
       { path: 'mapas/:clinicaId', element: <MapaListView /> },
       { path: 'mapas/:clinicaId/:mapaId', element: <MapaFormView /> },
       { path: 'solicitacoes', element: <SolicitacaoEntFormView /> },
-      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:refeicao/:dataReferencia', element: <SolicitacaoListView /> },
-      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:refeicao/:dataReferencia/:solicitacaoId', element: <SolicitacaoItemListView /> },
+      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia', element: <SolicitacaoListView /> },
+      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia/:solicitacaoId', element: <SolicitacaoItemListView /> },
       { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:refeicao/:dataReferencia/:solicitacaoId/resumo', element: <SolicitacaoItemResumoListView /> },
-      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:refeicao/:dataReferencia/form', element: <SolicitacaoFormView /> },
+      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia/form', element: <SolicitacaoFormView /> },
+      { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia/:solicitacaoId/:solicitacaoItemId', element: <SolicitacaoItemFormView /> },
       { path: '401', element: <NotAuthorizedView /> },
       { path: '*', element: <Navigate to="/404" /> }
 

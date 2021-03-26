@@ -1,4 +1,4 @@
-import { React } from 'react';
+import {React, useState, useEffect } from 'react';
 import {
   Container,
   Grid,
@@ -17,14 +17,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SolicitacaoFormView = () => {
+const SolicitacaoItemFormViewFormView = () => {
   const classes = useStyles();
-  let {contratoId, unidadeId, clinicaId, refeicao, dataReferencia} = useParams();
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const[contratoSel, setContratoSel] = useState();
+  
+  let {contratoId, unidadeId, clinicaId, dataReferencia, solicitacaoId, solicitacaoItemId}  = useParams();
 
   return (
     <Page
       className={classes.root}
-      title="Nova solicitação"
+      title="Alteração mapa do paciente"
     >
       <Container maxWidth="lg">
         <Grid
@@ -33,11 +37,17 @@ const SolicitacaoFormView = () => {
         >
           <Grid
             item
-            lg={11}
-            md={11}
+            lg={8}
+            md={8}
             xs={12}
           >
-            <ProfileDetails contratoId={contratoId} unidadeId={unidadeId} clinicaId={clinicaId} refeicao={refeicao} dataReferencia={dataReferencia}/>
+            <ProfileDetails
+              contratoId={contratoId}
+              unidadeId={unidadeId}
+              clinicaId={clinicaId}
+              dataReferencia={dataReferencia}
+              solicitacaoId={solicitacaoId}
+              solicitacaoItemId={solicitacaoItemId}/>
           </Grid>
         </Grid>
       </Container>
@@ -45,4 +55,4 @@ const SolicitacaoFormView = () => {
   );
 };
 
-export default SolicitacaoFormView;
+export default SolicitacaoItemFormViewFormView;

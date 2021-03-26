@@ -41,7 +41,7 @@ const Results = ({ className, pageable, ...rest }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [selectedMapaIds, setSelectedMapaIds] = useState([]);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(50);
   const [page, setPage] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [isTokenExpired, setTokenExpired] = useState(false);
@@ -195,6 +195,9 @@ const Results = ({ className, pageable, ...rest }) => {
                   Dieta
                 </StyledTableCell>
                 <StyledTableCell>
+                  Observações
+                </StyledTableCell>
+                <StyledTableCell>
                   Ações
                 </StyledTableCell>
               </TableRow>
@@ -236,8 +239,10 @@ const Results = ({ className, pageable, ...rest }) => {
                         'America/Sao_Paulo'), "dd/MM/yyyy")}
                   </TableCell>
                   <TableCell>
-                    {mapa.tipoDieta.sigla}
-                    {mapa.tipoDietaComplementar && "/" + mapa.tipoDietaComplementar.sigla}
+                    {mapa.dieta}
+                  </TableCell>
+                  <TableCell>
+                    {mapa.observacoes}
                   </TableCell>
                   <TableCell>
                     <Typography>

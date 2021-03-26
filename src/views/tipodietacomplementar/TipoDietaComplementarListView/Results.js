@@ -264,7 +264,7 @@ const Results = ({ className, pageable, ...rest }) => {
                       <IconButton
                         title="Excluir dieta complementar" color="secondary"
                         onClick={(event) => handleDeleteTipoDietaComp(tipoDietaComp.id)}>
-                          <Delete />
+                          <Delete color="primary"/>
                       </IconButton>
                     </Typography>
                   </TableCell>
