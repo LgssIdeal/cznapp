@@ -642,7 +642,7 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
       {...rest}
     >
       <AppBar position="static">
-        <Tabs value={tabValue} onChange={handleTabChange}>
+        <Tabs value={tabValue} onChange={handleTabChange} variant="scrollable" scrollButtons="auto">
           <Tab label="Valores" {...a11yProps(0)}/>
           <Tab label="Unidades associadas" {...a11yProps(1)}/>
           <Tab label="Refeições de acompanhante" {...a11yProps(2)}/>
