@@ -17,13 +17,15 @@ import {
   FormControlLabel,
   Checkbox,
   FormControl,
-  FormLabel
+  FormLabel,
+  Typography
 } from '@material-ui/core';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Alert} from '@material-ui/lab';
 import MapaService from '../../../services/MapaService';
 import TipoDietaService from '../../../services/TipoDietaService';
 import TipoDietaComplementarService from '../../../services/TipoDietaComplementarService';
+import ClinicaService from '../../../services/ClinicaService';
 import moment from 'moment';
 
 const listIdentificacao = [
@@ -54,6 +56,14 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   const [error, setError] = useState("")
   const [tiposDieta, setTiposDieta] = useState([]);
   const [tiposDietaComp, setTiposDietaComp] = useState([]);
+  const [tiposDietaAcomp, setTiposDietaAcomp] = useState([]);
+  const [tiposDietaCompAcomp, setTiposDietaCompAcomp] = useState([]);
+  const [clinicaSel, setClinicaSel] = useState({
+    id: '',
+    descricao: '',
+    sigla: '',
+    permiteAcompanhante: false
+  });
   const [mapaSel, setMapaSel] = useState({
     id: 0,
     clinica: clinicaId,
@@ -64,6 +74,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     identificacao: '',
     tipoDieta: 0,
     tiposDietaComplementar: [],
+    tipoDietaAcomp: 0,
+    tiposDietaComplementarAcomp: [],
     dieta: '',
     observacoes: ''
   });
@@ -81,6 +93,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     identificacao: '',
     tipoDieta: 0,
     tiposDietaComplementar: [],
+    tipoDietaAcomp: 0,
+    tiposDietaComplementarAcomp: [],
     dieta: '',
     observacoes: ''
   });
@@ -95,14 +109,17 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     Será atualizado no effect disparado quando carregados os tipos de dieta complementares da dieta selecionada
    */
   const [tpsComp, setTpsComp] = useState([]);
+  const [tpsCompAcomp, setTpsCompAcomp]= useState([]);
 
   /**********************************************/
   /*           Effects and functions            */
   /**********************************************/
 
   useEffect(() => {
+    
     MapaService.getMapa(mapaId)
       .then((result) => {
+        console.log(result.data);
         setMapaSel(result.data);
       })
       .catch((error) => {
@@ -120,6 +137,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
               identificacao: '',
               tipoDieta: 0,
               tiposDietaComplementar: [],
+              tipoDietaAcomp: 0,
+              tiposDietaComplementarAcomp: [],
               dieta: '',
               observacoes: ''
             });
@@ -133,6 +152,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
 
   useEffect(() => {
     setLoading(true);
+    setTpsComp([]);
     var dataNasc = moment(mapaSel.dataNascimento).format("YYYY-MM-DD");
     
     setValues({
@@ -144,7 +164,9 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       tipoIdentificacao: mapaSel.tipoIdentificacao,
       identificacao: mapaSel.identificacao,
       tipoDieta: mapaSel.tipoDieta.id,
-      tiposDietaComplementar: mapaSel.tiposDietaComplementar.length > 0 ? mapaSel.tipoDietaComplementar : [],
+      tiposDietaComplementar: mapaSel.tiposDietaComplementar.length > 0 ? mapaSel.tiposDietaComplementar : [],
+      tipoDietaAcomp: mapaSel.tipoDietaAcomp ? mapaSel.tipoDietaAcomp.id : 0,
+      tiposDietaComplementarAcomp: mapaSel.tiposDietaComplementarAcomp.length > 0 ? mapaSel.tiposDietaComplementarAcomp : [],
       dieta: mapaSel.dieta,
       observacoes: mapaSel.observacoes
     });
@@ -153,6 +175,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       .then((result) => {
         setLoading(false);
         setTiposDieta(result.data);
+        setTiposDietaAcomp(result.data);
       })
       .catch((error) => {
         if(error.response.data) {
@@ -204,6 +227,41 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     
   }, [values.tipoDieta]);
 
+  useEffect(() => {
+    if(values.tipoDietaAcomp) {
+      setLoading(true);
+      TipoDietaComplementarService.getTiposDietaComplementarList(values.tipoDietaAcomp)
+        .then((result) => {
+          setLoading(false);
+          setTiposDietaCompAcomp(result.data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          
+          if(error.response) {
+            if(error.response.data.status !== 404 && error.response.data.status !== 400) {
+              setError(error.response.data.detail);
+            }
+          } else {
+            var e = JSON.stringify(error);
+            if(e.includes("401")) {
+              navigate("/", {});
+            } else {
+              if(e.includes("404")) {
+                setTiposDietaCompAcomp([]);
+              } else {
+                setError(JSON.stringify(error));
+              }
+              
+            }
+          }
+        });
+    } else {
+      setTiposDietaCompAcomp([]);
+    }
+    setTpsCompAcomp([]);
+  }, [values.tipoDietaAcomp])
+
   /* Effect para carregamento dos tipos de dieta complementares e indicação de quais estão selecionados */
   useEffect(() => {
     if(tiposDietaComp) {
@@ -229,6 +287,48 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     }
   }, [tiposDietaComp]);
 
+  useEffect(() => {
+    if(tiposDietaCompAcomp) {
+      if(mapaSel.tiposDietaComplementarAcomp) {
+        for(var i = 0; i < tiposDietaCompAcomp.length; i++) {
+          var achou = false;
+          
+
+          if(mapaSel.tiposDietaComplementarAcomp.find(element => element.id === tiposDietaCompAcomp[i].id)) {
+            achou = true;
+          }
+          
+          const value = {
+            id: tiposDietaCompAcomp[i].id,
+            descricao: tiposDietaCompAcomp[i].descricao,
+            sigla: tiposDietaCompAcomp[i].sigla,
+            selecionado : achou
+          }
+
+          setTpsCompAcomp(old => [...old, value]);
+        }
+      }
+    }
+  }, [tiposDietaCompAcomp]);
+  
+
+  useEffect(() => {
+    setLoading(true);
+    ClinicaService.getClinica(clinicaId)
+      .then((result) => {
+        setClinicaSel(result.data);
+      })
+      .catch((error) => {
+        if(error.response.data) {
+          setError(error.response.data.detail);
+        } else {
+          var e = JSON.stringify(error);
+          setError(e);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [clinicaId])
+
   const handleTipoDietaChange = (event) => {
     setValues({
       ...values,
@@ -238,6 +338,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   };
 
   const handleChange = (event) => {
+    setValues({
+      ...values,
+      [event.target.name]: event.target.value
+    });
+  };
+
+  const handleTipoDietaAcompChange = (event) => {
     setValues({
       ...values,
       [event.target.name]: event.target.value
@@ -255,6 +362,16 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     setTpsComp(tipos);
   }
 
+  const handleCheckTpDietaComplementarAcomp = (event) => {
+    let tipos = [...tpsCompAcomp];
+    for(var i = 0; i < tipos.length; i++) {
+      if(tipos[i].id === parseInt(event.target.id)) {
+        tipos[i].selecionado = event.target.checked;
+      }
+    }
+    setTpsCompAcomp(tipos);
+  }
+
 
   const handleGoBack = (() => {
     navigate('/app/mapas/' + clinicaId, {replace : true});
@@ -266,7 +383,9 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     setLoading(true);
 
     let tpCompSel = [];
+    let tpCompAcompSel = [];
     let aux = [...tpsComp];
+    let aux1 = [...tpsCompAcomp];
 
     for(var i = 0; i < aux.length; i++) {
       if(aux[i].selecionado) {
@@ -274,7 +393,11 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       }
     }
 
-    console.log(tpCompSel);
+    for(var i = 0; i < aux1.length; i++) {
+      if(aux1[i].selecionado) {
+        tpCompAcompSel.push(aux1[i].id);
+      }
+    }
 
     const params = new URLSearchParams();
     params.append('mapaId', values.id);
@@ -286,6 +409,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     params.append('identificacao', values.identificacao);
     params.append('tipoDietaId', values.tipoDieta);
     params.append('tiposDietaComplemetarId', tpCompSel);
+    params.append('tipoDietaAcompId', values.tipoDietaAcomp);
+    params.append('tiposDietaComplementarAcompId', tpCompAcompSel);
     params.append('observacoes', values.observacoes);
     params.append('usuarioId', userId);
 
@@ -430,126 +555,169 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
                 variant="outlined"
               ></TextField>
             </Grid>
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Tipo de dieta"
-                name="tipoDieta"
-                required
-                helperText="Informe o tipo de dieta"
-                onChange={handleTipoDietaChange}
-                value={values.tipoDieta}
-                variant="outlined"
-                select
-                SelectProps={{ native: true }}
-              >
-                <option value={0}></option>
-                {
-                  tiposDieta.map((option) =>(
-                    <option key={option.id} value={option.id}>{option.sigla}</option>
-                  ))
-                }
-              </TextField>
-            </Grid>
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              {/* 
-              <TextField
-                fullWidth
-                label="Complemento"
-                name="tipoDietaComplementar"
-                required
-                helperText="Informe complemento"
-                onChange={handleChange}
-                value={values.tipoDietaComplementar}
-                variant="outlined"
-                select
-                SelectProps={{ native: true }}
-              >
-                <option key={0} value={0}></option>
-                {
-                  tiposDietaComp.map((option) =>(
-                    <option key={option.id} value={option.id}>{option.sigla}</option>
-                  ))
-                }
-              </TextField>
-            */}
-                
-            <FormControl component="fieldset" variant="standard">
-              <FormLabel component="legend" >Complementação de dieta</FormLabel>
-              <FormGroup row>
-              {
-                tpsComp.map((option) =>(
-                  <FormControlLabel
-                    control={<Checkbox
-                                color="primary"
-                                key={option.id}
-                                id={option.id}
-                                name={"selecionado"}
-                                checked={option.selecionado} 
-                                onChange={handleCheckTpDietaComplementar}/>}
-                    label={option.sigla} />
-                ))
-              }
-
-              </FormGroup>
-            </FormControl>
-            
-            </Grid>
-            
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Observações"
-                name="observacoes"
-                helperText="Observações"
-                onChange={handleChange}
-                value={values.observacoes}
-                variant="outlined"
-              ></TextField>
-            </Grid>
-            
           </Grid>
+          <Card>
+            <CardHeader title="Dieta" subheader="Informe a dieta do paciente"></CardHeader>
+            <Divider />
+            <CardContent>
+            <Grid container spacing={3}>
+                
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    label="Tipo de dieta"
+                    name="tipoDieta"
+                    required
+                    helperText="Informe o tipo de dieta"
+                    onChange={handleTipoDietaChange}
+                    value={values.tipoDieta}
+                    variant="outlined"
+                    select
+                    SelectProps={{ native: true }}
+                  >
+                    <option value={0}></option>
+                    {
+                      tiposDieta.map((option) =>(
+                        <option key={option.id} value={option.id}>{option.sigla}</option>
+                      ))
+                    }
+                  </TextField>
+                </Grid>
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >   
+                <FormControl component="fieldset" variant="standard">
+                  <FormLabel component="legend" >Complementação de dieta</FormLabel>
+                  <FormGroup row>
+                  {
+                    tpsComp.map((option) =>(
+                      <FormControlLabel
+                        control={<Checkbox
+                                    color="primary"
+                                    key={option.id}
+                                    id={option.id}
+                                    name={"selecionado"}
+                                    checked={option.selecionado} 
+                                    onChange={handleCheckTpDietaComplementar}/>}
+                        label={option.sigla} />
+                    ))
+                  }
+
+                  </FormGroup>
+                </FormControl>
+                
+                </Grid>
+                
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >
+                  <TextField
+                    fullWidth
+                    label="Observações"
+                    name="observacoes"
+                    helperText="Observações"
+                    onChange={handleChange}
+                    value={values.observacoes}
+                    variant="outlined"
+                  ></TextField>
+                </Grid>
+                
+              </Grid>
+            </CardContent>
+          </Card>
+          <Divider />
+          <Card>
+            <CardHeader title="Dieta acompanhante"></CardHeader>
+            <CardContent>
+              {!clinicaSel.permiteAcompanhante ? 
+              <Typography>Clínica permite acompanhante</Typography> : 
+              <Grid container spacing={3}>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Tipo de dieta"
+                    name="tipoDietaAcomp"
+                    required
+                    helperText="Informe o tipo de do acompanhante"
+                    onChange={handleTipoDietaAcompChange}
+                    value={values.tipoDietaAcomp}
+                    variant="outlined"
+                    select
+                    SelectProps={{ native: true }}
+                  >
+                    <option value={0}></option>
+                    {
+                      tiposDietaAcomp.map((option) =>(
+                        <option key={option.id} value={option.id}>{option.sigla}</option>
+                      ))
+                    }
+                  </TextField>
+                </Grid>
+                <Grid
+                  item
+                  md={12}
+                  xs={12}
+                >
+                  
+                    
+                <FormControl component="fieldset" variant="standard">
+                  <FormLabel component="legend" >Complementação de dieta</FormLabel>
+                  <FormGroup row>
+                  {
+                    tpsCompAcomp.map((option) =>(
+                      <FormControlLabel
+                        control={<Checkbox
+                                    color="primary"
+                                    key={option.id}
+                                    id={option.id}
+                                    name={"selecionado"}
+                                    checked={option.selecionado} 
+                                    onChange={handleCheckTpDietaComplementarAcomp}/>}
+                        label={option.sigla} />
+                    ))
+                  }
+
+                  </FormGroup>
+                </FormControl>
+                
+                </Grid>
+                </Grid>
+              }
+            </CardContent>
+          </Card>
+          <Box p={2}>
+            <Grid container spacing={3}>
+              <Grid item md={3} xs={6}>
+                <Button
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                  onClick={handleSubmit}>
+                  Gravar
+                </Button>
+              </Grid>
+              <Grid item md={3} xs={6}>
+                <Button
+                  fullWidth
+                  color="secondary"
+                  onClick={handleGoBack}
+                  variant="contained">
+                  Cancelar
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+          {loading && 
+              <LinearProgress></LinearProgress>}
         </CardContent>
-        <Divider />
-      <Grid container spacing={3}>
-        <Grid
-              item
-              md={6}
-              xs={6}
-            >
-            <Button
-              fullWidth
-              color="primary"
-              variant="contained"
-              onClick={handleSubmit}
-            >
-              Gravar
-            </Button>
-        </Grid>
-        <Grid item md={6} xs={6}>
-            <Button
-              fullWidth
-              onClick={handleGoBack}
-              variant="contained"
-            >
-              Cancelar
-            </Button>
-        </Grid>
-      </Grid>
-        {loading && 
-          <LinearProgress></LinearProgress>}
       </Card>
     </form>
   );

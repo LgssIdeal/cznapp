@@ -38,6 +38,12 @@ import SolicitacaoFormView from './views/solicitacao/SolicitacaoFormView';
 import SolicitacaoItemListView from './views/solicitacao/SolicitacaoItemListView';
 import SolicitacaoItemResumoListView from './views/solicitacao/SolicitacaoItemResumoListView';
 import SolicitacaoItemFormView from './views/solicitacao/SolicitacaoItemFormView';
+import InsumoListView from './views/insumo/InsumoListView';
+import InsumoFormView from './views/insumo/InsumoFormView';
+import SolicitacaoPlantonistaListView from './views/solicitacao/SolicitacaoPlantonistaListView';
+import SolicitacaoPlantonistaFormView from './views/solicitacao/SolicitacaoPlantonistaFormView';
+import CautelaListView from './views/cautela/CautelaListView';
+import CautelaFormView from './views/cautela/CautelaFormView';
 
 const routes = [
   {
@@ -59,6 +65,12 @@ const routes = [
       { path: 'clinicas/:clienteId/:unidadeId', element: <ClinicaListView /> },
       { path: 'clinicas/:clienteId/:unidadeId/:clinicaId', element: <ClinicaFormView /> },
       { path: 'clientes', element: <ClienteListView /> },
+      { path: 'insumos', element: <InsumoListView /> },
+      { path: 'cautelas', element: <CautelaListView /> },
+      { path: 'cautelas/:cautelaId', element: <CautelaFormView /> },
+      { path: 'insumos/:insumoId', element: <InsumoFormView /> },
+      { path: 'solicitacoesplantonista', element: <SolicitacaoPlantonistaListView /> },
+      { path: 'solicitacoesplantonista/:solicitacaoId', element: <SolicitacaoPlantonistaFormView /> },
       { path: 'usuario/:userId', element: <UserFormView /> },
       { path: 'empresa/:empresaId', element: <EmpresaFormView /> },
       { path: 'cliente/:clienteId', element: <ClienteFormView /> },

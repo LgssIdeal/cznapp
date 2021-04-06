@@ -11,7 +11,8 @@ import {
   List,
   Typography,
   makeStyles,
-  ListItem
+  ListItem,
+  ListItemIcon
 } from '@material-ui/core';
 import {
   AlertCircle as AlertCircleIcon,
@@ -29,6 +30,8 @@ import {
   FileText as FileTextIcon,
   BookOpen as BookOpenIcon,
   Coffee as CoffeeIcon,
+  Clipboard as ClipboardIcon,
+  List as ListIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 
@@ -65,6 +68,11 @@ const items = [
     title: 'Contratos'
   },
   {
+    href: '/app/insumos',
+    icon: ClipboardIcon,
+    title: 'Insumos'
+  },
+  {
     href: '/app/mapas',
     icon: BookOpenIcon,
     title: 'Mapas'
@@ -73,6 +81,11 @@ const items = [
     href: '/app/solicitacoes',
     icon: CoffeeIcon,
     title: 'Solicitações'
+  },
+  {
+    href: '/app/cautelas',
+    icon: ListIcon,
+    title: 'Cautelas'
   },
   {
     href: '/app/configuracoes',

@@ -7,6 +7,9 @@ import {
 import Page from '../../../components/Page';
 import ProfileDetails from './ProfileDetails';
 import { useParams } from 'react-router-dom';
+import ClienteService from '../../../services/ClienteService';
+import UnidadeService from '../../../services/UnidadeService';
+import ClinicaService from '../../../services/ClinicaService';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,14 +20,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ConfigContratoFormView = () => {
-  const classes = useStyles();  
-  let {contratoId}  = useParams();
+const InsumoFormView = () => {
+  let {insumoId}  = useParams();
+  const classes = useStyles();
 
   return (
     <Page
       className={classes.root}
-      title="Cadastro do contrato"
+      title="Cadastro da unidade"
     >
       <Container maxWidth="lg">
         <Grid
@@ -33,11 +36,11 @@ const ConfigContratoFormView = () => {
         >
           <Grid
             item
-            lg={11}
+            lg={8}
             md={6}
             xs={12}
           >
-            <ProfileDetails contratoId={contratoId}/>
+            <ProfileDetails insumoId={insumoId}/>
           </Grid>
         </Grid>
       </Container>
@@ -45,4 +48,4 @@ const ConfigContratoFormView = () => {
   );
 };
 
-export default ConfigContratoFormView;
+export default InsumoFormView;

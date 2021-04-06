@@ -19,33 +19,39 @@ import {
 } from '@material-ui/core';
 
 import {Alert} from '@material-ui/lab';
-import ClinicaService from '../../../services/ClinicaService';
+import InsumoService from '../../../services/InsumoService';
 
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest }) => {
+const ProfileDetails = ({ className, insumoId, ...rest }) => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
   const [error, setError] = useState("")
   const [values, setValues] = useState({
-    id: clinicaSel.id,
-    descricao: clinicaSel.descricao,
-    sigla: clinicaSel.sigla,
-    permiteAcompanhante: false
+    id: 0,
+    descricao: '',
+    unidade: '',
+    valor: 0.0
   });
 
+
   useEffect(() => {
-    setValues({
-      id: clinicaSel.id,
-      descricao: clinicaSel.descricao,
-      sigla: clinicaSel.sigla,
-      permiteAcompanhante: clinicaSel.permiteAcompanhante
-    });    
-  }, [clinicaSel]);
+    if(insumoId !== "0") {
+      setLoading(true);
+      InsumoService.getInsumo(insumoId)
+        .then((result) => {
+          setValues(result.data);
+        })
+        .catch((error) => {
+          setError(JSON.stringify(error))
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [insumoId])
 
   const handleChange = (event) => {
     setValues({
@@ -62,7 +68,7 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
   };
 
   const handleGoBack = (() => {
-    navigate('/app/clinicas/' + clienteSel.id + '/' + unidadeSel.id, {replace : true});
+    navigate('/app/insumos', {replace : true});
   });
 
   const handleSubmit = ( () => {
@@ -70,18 +76,17 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
     const data = {
       id : values.id,
       descricao : values.descricao,
-      sigla : values.sigla,
-      permiteAcompanhante: values.permiteAcompanhante
+      unidade: values.unidade,
+      valor: values.valor
     }
 
     const json = JSON.stringify(data);
         
-    ClinicaService.criaClinica(json, unidadeSel.id)
+    InsumoService.criaInsumo(json)
       .then((result) => {
-        alert("Clínica gravada com sucesso.");
+        alert("Insumo gravado com sucesso.");
         setLoading(false);
-        var url = "/app/clinicas/" + clienteSel.id + "/" + unidadeSel.id;
-        console.log("Cria/Altera clinica url: ", url);
+        var url = "/app/insumos";
         navigate(url, {replace : true});
       })
       .catch((error) => {
@@ -101,7 +106,7 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
       <Card>
         <CardHeader
           subheader="Informe os dados e clique no botão salvar."
-          title={"Cadastro da clínica - Unidade: " + unidadeSel.descricao}
+          title={"Cadastro de insumos"}
         />
         {error && 
                   <Alert severity="error">{error}</Alert>}
@@ -112,7 +117,7 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
               <TextField type="hidden" name="id" value={values.id}></TextField>
               <TextField
                 fullWidth
-                helperText="Informe a unidade"
+                helperText="Informe a descrição"
                 label="Descrição"
                 name="descricao"
                 onChange={handleChange}
@@ -125,25 +130,28 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Sigla"
-                name="sigla"
-                helperText="Informe a sigla da unidade"
+                label="Unidade"
+                name="unidade"
+                helperText="Informe a unidade do insumo (PC, UN, CX)"
                 onChange={handleChange}
                 required
-                value={values.sigla}
+                value={values.unidade}
                 variant="outlined"
               />
             </Grid>
           </Grid>
           <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
-              <FormControlLabel 
-                control={<Switch 
-                          checked={values.permiteAcompanhante} 
-                          onChange={handleCheck} 
-                          name="permiteAcompanhante"
-                          color="primary"/>}
-                label={"Permite acompanhante"}/>
+              <TextField
+                fullWidth
+                label="Valor"
+                name="valor"
+                helperText="Informe o valor do insumo"
+                onChange={handleChange}
+                required
+                value={values.valor}
+                variant="outlined"
+              />
             </Grid>
           </Grid>
         </CardContent>

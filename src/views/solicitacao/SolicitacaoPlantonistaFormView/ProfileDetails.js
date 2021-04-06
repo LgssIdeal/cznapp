@@ -19,33 +19,43 @@ import {
 } from '@material-ui/core';
 
 import {Alert} from '@material-ui/lab';
-import ClinicaService from '../../../services/ClinicaService';
+import SolicitacaoPlantonistaService from '../../../services/SolicitacaoPlantonistaService';
+import refeicoes from '../../../utils/refeicoes';
 
 const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest }) => {
+const ProfileDetails = ({ className, solicitacaoId, ...rest }) => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
   const [error, setError] = useState("")
   const [values, setValues] = useState({
-    id: clinicaSel.id,
-    descricao: clinicaSel.descricao,
-    sigla: clinicaSel.sigla,
-    permiteAcompanhante: false
+    id: 0,
+    dataSolicitacao: null,
+    dataAlteracao: null,
+    usuarioSolicitacao: null,
+    usuarioAlteracao: null,
+    refeicao: '',
+    quantidade: ''
   });
 
+
   useEffect(() => {
-    setValues({
-      id: clinicaSel.id,
-      descricao: clinicaSel.descricao,
-      sigla: clinicaSel.sigla,
-      permiteAcompanhante: clinicaSel.permiteAcompanhante
-    });    
-  }, [clinicaSel]);
+    if(solicitacaoId !== "0") {
+      setLoading(true);
+      SolicitacaoPlantonistaService.getSolicitacao(solicitacaoId)
+        .then((result) => {
+          setValues(result.data);
+        })
+        .catch((error) => {
+          setError(JSON.stringify(error))
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [solicitacaoId])
 
   const handleChange = (event) => {
     setValues({
@@ -62,26 +72,24 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
   };
 
   const handleGoBack = (() => {
-    navigate('/app/clinicas/' + clienteSel.id + '/' + unidadeSel.id, {replace : true});
+    navigate('/app/solicitacoesplantonista', {replace : true});
   });
 
   const handleSubmit = ( () => {
     setLoading(true);
-    const data = {
-      id : values.id,
-      descricao : values.descricao,
-      sigla : values.sigla,
-      permiteAcompanhante: values.permiteAcompanhante
-    }
+    
+    const params = new URLSearchParams();
+    params.append('solicitacaoId', values.id);
+    params.append('usuarioId', JSON.parse(localStorage.getItem("@app-user")).id);
+    params.append('refeicao', values.refeicao);
+    params.append('quantidade', parseInt(values.quantidade));
 
-    const json = JSON.stringify(data);
         
-    ClinicaService.criaClinica(json, unidadeSel.id)
+    SolicitacaoPlantonistaService.criaSolicitacao(params)
       .then((result) => {
-        alert("Clínica gravada com sucesso.");
+        alert("Solcitação gravada com sucesso.");
         setLoading(false);
-        var url = "/app/clinicas/" + clienteSel.id + "/" + unidadeSel.id;
-        console.log("Cria/Altera clinica url: ", url);
+        var url = "/app/solicitacoesplantonista";
         navigate(url, {replace : true});
       })
       .catch((error) => {
@@ -101,7 +109,7 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
       <Card>
         <CardHeader
           subheader="Informe os dados e clique no botão salvar."
-          title={"Cadastro da clínica - Unidade: " + unidadeSel.descricao}
+          title={"Solicitação de refeição para plantonista"}
         />
         {error && 
                   <Alert severity="error">{error}</Alert>}
@@ -111,39 +119,35 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
             <Grid item md={6} xs={12}>
               <TextField type="hidden" name="id" value={values.id}></TextField>
               <TextField
-                fullWidth
-                helperText="Informe a unidade"
-                label="Descrição"
-                name="descricao"
-                onChange={handleChange}
-                required
-                value={values.descricao}
-                variant="outlined"
+                  fullWidth
+                  onChange={handleChange}
+                  required
+                  variant="outlined"
+                  select
+                  SelectProps={{ native: true }}
+                  name="refeicao"
+                  label="Refeição"
+                  disabled={loading}
+                  value={values.refeicao}>
+                  {
+                    refeicoes.map((option) =>(
+                      <option key={option.id} value={option.id}>{option.value}</option>
+                    ))
+                  }
                 
-              />
+                </TextField>
             </Grid>
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Sigla"
-                name="sigla"
-                helperText="Informe a sigla da unidade"
+                label="Quantidade"
+                name="quantidade"
+                helperText="Informe a quantidade de refeições"
                 onChange={handleChange}
                 required
-                value={values.sigla}
+                value={values.quantidade}
                 variant="outlined"
               />
-            </Grid>
-          </Grid>
-          <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              <FormControlLabel 
-                control={<Switch 
-                          checked={values.permiteAcompanhante} 
-                          onChange={handleCheck} 
-                          name="permiteAcompanhante"
-                          color="primary"/>}
-                label={"Permite acompanhante"}/>
             </Grid>
           </Grid>
         </CardContent>

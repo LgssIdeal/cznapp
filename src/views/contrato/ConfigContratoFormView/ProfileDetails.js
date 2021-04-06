@@ -80,6 +80,16 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
     severity: ""
   });
 
+  const [errorRefAcomp, setErrorRefAcomp] = useState({
+    msg: "",
+    severity: ""
+  });
+
+  const [errorRefPlant, setErrorRefPlant] = useState({
+    msg: "",
+    severity: ""
+  });
+
   const [values, setValues] = useState({
     contratoId: contratoId,
     refeicao: "",
@@ -90,48 +100,26 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
     unidade : ''
   });
 
+  const [refeicaoSel, setRefeicaoSel] = useState({
+    refeicaoSel: ''
+  })
+
+  const [refeicaoSelPlant, setRefeicaoSelPlant] = useState({
+    refeicaoSel: ''
+  })
+
   const [tabValue, setTabValue] = useState(0)
 
   const [refeicoesContrato, setRefeicoesContrato] = useState([]);
   const [reload, setReload] = useState(0);
-  const [reloadUnidades, setReloadUnidades] = useState(0)
+  const [reloadUnidades, setReloadUnidades] = useState(0);
+  const [reloadRefeicoesAcompanhante, setReloadRefeicoesAcompanhante] = useState(0);
+  const [reloadRefeicoesPlant, setReloadRefeicoesPlant] = useState(0);
   const [unidadesContrato, setUnidadesContrato] = useState([]);
+  const [refsContratoAcomp, setRefsContratoAcomp] = useState([]);
+  const [refsContratoPlant, setRefsContratoPlant] = useState([]);
   const [unidades, setUnidades]= useState([]);
   const [contrato, setContrato] = useState();
-
-  //const refeicoes = arrRefeicoes;
-  /*
-  const refeicoes = [
-    {
-      id: "",
-      value: ""
-    },
-    {
-      id: "DESJEJUM",
-      value: "Desjejum"
-    },
-    {
-      id: "LANCHE_1",
-      value: "Lanche 1"
-    },
-    {
-      id: "ALMOCO",
-      value: "Almoço"
-    },
-    {
-      id: "LANCHE_2",
-      value: "Lanche 2"
-    },
-    {
-      id: "JANTAR",
-      value: "Jantar"
-    },
-    {
-      id:  "CEIA",
-      value: "Ceia"
-    }
-  ];
-  */
 
   const map = new Map();
   map.set("DESJEJUM", "Desjejum");
@@ -255,6 +243,56 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
     }
   },[contrato]);
 
+  useEffect(() => {
+    if(contrato) {
+      setLoading(true);
+      ContratoService.getRefeicoesAcompanhante(contrato.id)
+        .then((result) => {
+          setRefsContratoAcomp(result.data);
+        })
+        .catch((error) => {
+          if(error.response.data) {
+            setErrorRefAcomp({
+              msg: error.response.data.detail,
+              severity: "error"
+            });
+          } else {
+            setErrorRefAcomp({
+              msg: JSON.stringify(error),
+              severity: "error"
+            });
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+    
+  }, [contrato, reloadRefeicoesAcompanhante]);
+
+  useEffect(() => {
+    if(contrato) {
+      setLoading(true);
+      ContratoService.getRefeicoesPlantonista(contrato.id)
+        .then((result) => {
+          setRefsContratoPlant(result.data);
+        })
+        .catch((error) => {
+          if(error.response.data) {
+            setErrorRefPlant({
+              msg: error.response.data.detail,
+              severity: "error"
+            });
+          } else {
+            setErrorRefPlant({
+              msg: JSON.stringify(error),
+              severity: "error"
+            });
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+    
+  }, [contrato, reloadRefeicoesPlant]);
+
   const handleSubmit = () => {
     setLoading(true);
     if(values.refeicao === '') {
@@ -357,6 +395,7 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
       });
   }
 
+
   const handleAdicionaUnidade = () => {
     setLoading(true);
     ContratoService.adicionaUnidade(unidadeIdSel.unidade, contrato.id)
@@ -428,6 +467,124 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
       })
   }
 
+  /*
+  * Acompanhante
+  */
+  const handleAdicionaRefeicaoAcompanhante = () => {
+    setLoading(true);
+    ContratoService.addRefeicaoContratoAcompanhante(contrato.id, refeicaoSel.refeicao)
+      .then(() => {
+        if(reloadRefeicoesAcompanhante === 0) {
+          setReloadRefeicoesAcompanhante(1);
+        } else {
+          setReloadRefeicoesAcompanhante(0);
+        }
+        setRefeicaoSel({
+          refeicao: ''
+        })
+        setErrorRefAcomp( {
+          msg: 'Refeição adicionada com sucesso',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        if(error.response.data) {
+          setErrorRefAcomp({
+            msg: error.response.data.detail,
+            severity: "error"
+          });
+        } else {
+          setErrorRefAcomp({
+            msg: JSON.stringify(error),
+            severity: "error"
+          });
+        }
+      })
+      .finally(() => setLoading(false));
+  }
+
+  const handleExcluiRefeicaoAcompanhante = (refeicaoId) => {
+    setLoading(true);
+    ContratoService.excluiRefeicaoAcompanhante(refeicaoId)
+      .then(() => {
+        if(reloadRefeicoesAcompanhante === 0) {
+          setReloadRefeicoesAcompanhante(1);
+        } else {
+          setReloadRefeicoesAcompanhante(0);
+        }
+        setErrorRefAcomp({
+          msg: 'Refeição de acompanhante excluída com sucesso.',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        setErrorRefAcomp({
+          msg: 'Ocorreu um erro ao excluir a refeição do acompanhante: ' + JSON.stringify(error),
+          severity: 'error'
+        });
+      })
+      .finally(() => setLoading(false));
+  }
+
+  /*
+  * Plantonista
+  */
+  const handleAdicionaRefeicaoPlantonista = () => {
+    setLoading(true);
+    ContratoService.addRefeicaoContratoPlantonista(contrato.id, refeicaoSelPlant.refeicao)
+      .then(() => {
+        if(reloadRefeicoesPlant === 0) {
+          setReloadRefeicoesPlant(1);
+        } else {
+          setReloadRefeicoesPlant(0);
+        }
+        setRefeicaoSelPlant({
+          refeicao: ''
+        })
+        setErrorRefPlant( {
+          msg: 'Refeição adicionada com sucesso',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        if(error.response.data) {
+          setErrorRefPlant({
+            msg: error.response.data.detail,
+            severity: "error"
+          });
+        } else {
+          setErrorRefPlant({
+            msg: JSON.stringify(error),
+            severity: "error"
+          });
+        }
+      })
+      .finally(() => setLoading(false));
+  }
+
+  const handleExcluiRefeicaoPlantonista = (refeicaoId) => {
+    setLoading(true);
+    ContratoService.excluiRefeicaoPlantonista(refeicaoId)
+      .then(() => {
+        if(reloadRefeicoesPlant === 0) {
+          setReloadRefeicoesPlant(1);
+        } else {
+          setReloadRefeicoesPlant(0);
+        }
+        setErrorRefPlant({
+          msg: 'Refeição de excluída com sucesso.',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        setErrorRefAcomp({
+          msg: 'Ocorreu um erro ao excluir a refeição do plantonista: ' + JSON.stringify(error),
+          severity: 'error'
+        });
+      })
+      .finally(() => setLoading(false));
+  }
+
   const handleChange = (event) => {
     
     setValues({
@@ -439,6 +596,20 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
   const handleUnidadeChanged = (event) => {
     setUnidadeIdSel({
       ...unidadeIdSel,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const handleRefeicaoChanged = (event) => {
+    setRefeicaoSel({
+      ...refeicaoSel,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const handleRefeicaoPlantChanged = (event) => {
+    setRefeicaoSelPlant({
+      ...refeicaoSelPlant,
       [event.target.name]: event.target.value
     })
   }
@@ -475,6 +646,8 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label="Valores" {...a11yProps(0)}/>
           <Tab label="Unidades associadas" {...a11yProps(1)}/>
+          <Tab label="Refeições de acompanhante" {...a11yProps(2)}/>
+          <Tab label="Refeições de plantonista" {...a11yProps(3)}/>
         </Tabs>
       </AppBar>
       <TabPanel value={tabValue} index={0}>
@@ -504,10 +677,10 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
                   disabled={loading}
                   value={values.refeicao}>
                   {
-                  refeicoes.map((option) =>(
-                    <option key={option.id} value={option.id}>{option.value}</option>
-                  ))
-                }
+                    refeicoes.map((option) =>(
+                      <option key={option.id} value={option.id}>{option.value}</option>
+                    ))
+                  }
                 
                 </TextField>
               </Grid>
@@ -683,7 +856,178 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
           </CardContent>
         </Card>
       </TabPanel>
+      <TabPanel value={tabValue} index={2}>
+        <Card xs={12} md={12}>
+          <CardHeader
+            subheader="Informe os dados e clique adicionar."
+            title="Refeições de acompanhante"
+          />
+          {errorRefAcomp.msg && 
+            <Alert severity={errorRefAcomp.severity}>{errorRefAcomp.msg}</Alert>}
+          {loading && 
+            <LinearProgress></LinearProgress>}
+          <Divider />
+          <CardContent>
+            <Grid container spacing={1}>
+              <Grid item md={6} xs={12} >
 
+                <TextField
+                  fullWidth
+                  onChange={handleRefeicaoChanged}
+                  required
+                  variant="outlined"
+                  select
+                  SelectProps={{ native: true }}
+                  name="refeicao"
+                  label="Refeição"
+                  disabled={loading}
+                  value={refeicaoSel.refeicao}>
+                  {
+                    refeicoes.map((option) =>(
+                      <option key={option.id} value={option.id}>{option.value}</option>
+                    ))
+                  }
+                
+                </TextField>
+              </Grid>
+              <Grid item md={6} xs={12} >
+                <Button
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                  onClick={handleAdicionaRefeicaoAcompanhante}
+                  disabled={loading}>
+                  Adicionar
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container spacing={1}>    
+              <Grid item md={12} xs={12} >
+                <PerfectScrollbar>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>
+                          Refeição
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          Ação
+                        </StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {refsContratoAcomp.map((ref) => (
+                      <TableRow
+                        hover
+                        key={ref.id}>
+                        <TableCell>
+                          {map.get(ref.refeicao)}
+                        </TableCell>
+                        <TableCell>
+                          <Typography>
+                            <IconButton
+                              title="Excluir refeição" color="primary"
+                              onClick={(event) => handleExcluiRefeicaoAcompanhante(ref.id)}>
+                                <Delete />
+                            </IconButton>
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </PerfectScrollbar>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </TabPanel>
+      <TabPanel value={tabValue} index={3}>
+        <Card xs={12} md={12}>
+          <CardHeader
+            subheader="Informe os dados e clique adicionar."
+            title="Refeições de plantonista"
+          />
+          {errorRefPlant.msg && 
+            <Alert severity={errorRefPlant.severity}>{errorRefPlant.msg}</Alert>}
+          {loading && 
+            <LinearProgress></LinearProgress>}
+          <Divider />
+          <CardContent>
+            <Grid container spacing={1}>
+              <Grid item md={6} xs={12} >
+
+                <TextField
+                  fullWidth
+                  onChange={handleRefeicaoPlantChanged}
+                  required
+                  variant="outlined"
+                  select
+                  SelectProps={{ native: true }}
+                  name="refeicao"
+                  label="Refeição"
+                  disabled={loading}
+                  value={refeicaoSelPlant.refeicao}>
+                  {
+                    refeicoes.map((option) =>(
+                      <option key={option.id} value={option.id}>{option.value}</option>
+                    ))
+                  }
+                
+                </TextField>
+              </Grid>
+              <Grid item md={6} xs={12} >
+                <Button
+                  fullWidth
+                  color="primary"
+                  variant="contained"
+                  onClick={handleAdicionaRefeicaoPlantonista}
+                  disabled={loading}>
+                  Adicionar
+                </Button>
+              </Grid>
+            </Grid>
+            <Grid container spacing={1}>    
+              <Grid item md={12} xs={12} >
+                <PerfectScrollbar>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>
+                          Refeição
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          Ação
+                        </StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {refsContratoPlant.map((ref) => (
+                      <TableRow
+                        hover
+                        key={ref.id}>
+                        <TableCell>
+                          {map.get(ref.refeicao)}
+                        </TableCell>
+                        <TableCell>
+                          <Typography>
+                            <IconButton
+                              title="Excluir refeição" color="primary"
+                              onClick={(event) => handleExcluiRefeicaoPlantonista(ref.id)}>
+                                <Delete />
+                            </IconButton>
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </PerfectScrollbar>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </TabPanel>
     </form>
   );
 };

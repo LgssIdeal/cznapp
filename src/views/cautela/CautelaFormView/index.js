@@ -17,14 +17,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ConfigContratoFormView = () => {
-  const classes = useStyles();  
-  let {contratoId}  = useParams();
+const InsumoFormView = () => {
+  let {cautelaId}  = useParams();
+  const classes = useStyles();
 
   return (
     <Page
       className={classes.root}
-      title="Cadastro do contrato"
+      title="Cautela de entrega de insumos"
     >
       <Container maxWidth="lg">
         <Grid
@@ -33,11 +33,11 @@ const ConfigContratoFormView = () => {
         >
           <Grid
             item
-            lg={11}
+            lg={8}
             md={6}
             xs={12}
           >
-            <ProfileDetails contratoId={contratoId}/>
+            <ProfileDetails cautelaId={cautelaId}/>
           </Grid>
         </Grid>
       </Container>
@@ -45,4 +45,4 @@ const ConfigContratoFormView = () => {
   );
 };
 
-export default ConfigContratoFormView;
+export default InsumoFormView;

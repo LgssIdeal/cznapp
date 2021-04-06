@@ -128,6 +128,10 @@ const ProfileDetails = ({ className, ...rest }) => {
     navigate('/app/solicitacoes/' + values.contrato + '/' + values.unidade + '/' + values.clinica + '/' + values.dataReferencia, {replace: true});
   });
 
+  const handleSubmitPlantonistas = (() => {
+    navigate('/app/solicitacoesplantonista', {replcace: true});
+  });
+
   return (
     <form
       autoComplete="off"
@@ -224,8 +228,9 @@ const ProfileDetails = ({ className, ...rest }) => {
               >
               </TextField>
             </Grid>
-          
-            <Grid item md={12} xs={12}>
+          </Grid>
+          <Grid container spacing={2} direction="row">
+            <Grid item md={6} xs={6}>
               <Button
                 fullWidth
                 color="primary"
@@ -233,6 +238,16 @@ const ProfileDetails = ({ className, ...rest }) => {
                 onClick={handleSubmit}
                 disabled={loading}>
                 Ok
+              </Button>
+            </Grid>
+            <Grid item md={6} xs={6}>
+              <Button
+                fullWidth
+                color="primary"
+                variant="contained"
+                onClick={handleSubmitPlantonistas}
+                disabled={loading}>
+                Plantonistas
               </Button>
             </Grid>
           </Grid>

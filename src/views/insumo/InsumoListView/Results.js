@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
-  Avatar,
   Box,
   Card,
   Checkbox,
@@ -19,11 +18,11 @@ import {
   LinearProgress
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { Edit, Delete, Block, Check } from '@material-ui/icons'
+import {Edit, Delete, Dehaze} from '@material-ui/icons'
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import ClinicaService from '../../../services/ClinicaService';
+import InsumoService from '../../../services/InsumoService';
 import {Alert} from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,11 +32,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
-  
+const Results = ({ className, pageable, ...rest }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(true)
-  const [selectedClinicaIds, setSelectedClinicaIds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedInsumoIds, setSelectedInsumoIds] = useState([]);
   const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
@@ -50,35 +48,35 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
   const [reload, setReload] = useState(0);
 
   const handleSelectAll = (event) => {
-    let newSelectedClinicaIds;
+    let newSelectedInsumoIds;
 
     if (event.target.checked) {
-      newSelectedClinicaIds = lpageable.content.map((clinica) => clinica.id);
+      newSelectedInsumoIds = lpageable.content.map((insumo) => insumo.id);
     } else {
-      newSelectedClinicaIds = [];
+      newSelectedInsumoIds = [];
     }
 
-    setSelectedClinicaIds(newSelectedClinicaIds);
+    setSelectedInsumoIds(newSelectedInsumoIds);
   };
 
   const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedClinicaIds.indexOf(id);
-    let newSelectedClinicaIds = [];
+    const selectedIndex = selectedInsumoIds.indexOf(id);
+    let newSelectedInsumoIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedClinicaIds = newSelectedClinicaIds.concat(selectedClinicaIds, id);
+      newSelectedInsumoIds = newSelectedInsumoIds.concat(selectedInsumoIds, id);
     } else if (selectedIndex === 0) {
-      newSelectedClinicaIds = newSelectedClinicaIds.concat(selectedClinicaIds.slice(1));
-    } else if (selectedIndex === selectedClinicaIds.length - 1) {
-      newSelectedClinicaIds = newSelectedClinicaIds.concat(selectedClinicaIds.slice(0, -1));
+      newSelectedInsumoIds = newSelectedInsumoIds.concat(selectedInsumoIds.slice(1));
+    } else if (selectedIndex === selectedInsumoIds.length - 1) {
+      newSelectedInsumoIds = newSelectedInsumoIds.concat(selectedInsumoIds.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelectedClinicaIds = newSelectedClinicaIds.concat(
-        selectedClinicaIds.slice(0, selectedIndex),
-        selectedClinicaIds.slice(selectedIndex + 1)
+      newSelectedInsumoIds = newSelectedInsumoIds.concat(
+        selectedInsumoIds.slice(0, selectedIndex),
+        selectedInsumoIds.slice(selectedIndex + 1)
       );
     }
 
-    setSelectedClinicaIds(newSelectedClinicaIds);
+    setSelectedInsumoIds(newSelectedInsumoIds);
   };
 
   const handleLimitChange = (event) => {
@@ -89,26 +87,26 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
     setPage(newPage);
   };
 
-  const handleAlterClinica = (clinicaId) => {
-    navigate('/app/clinicas/' + clienteId + '/' + unidadeId + '/' + clinicaId, {replace : true});
+  const handleAlterInsumo = (insumoId) => {
+    navigate('/app/insumos/' + insumoId, {replace : true});
   }
 
-  const handleDeleteClinica = (clinicaId) => {
+  const handleDeleteInsumo = (insumoId) => {
 
     confirmAlert({
       title: 'Confirmação',
-      message: 'Deseja excluir a clínica?',
+      message: 'Deseja excluir o insumo?',
       buttons: [
         {
           label:'Sim',
           onClick: () => {
 
-            ClinicaService.deleteClinica(clinicaId)
+            InsumoService.deleteInsumo(insumoId)
               .then((result) => {
                   
                 confirmAlert({
                   title: 'Informação',
-                  message: 'Clinica excluída',
+                  message: 'Insumo excluido',
                   buttons: [
                     {
                       label: 'Ok',
@@ -156,7 +154,11 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
 
   useEffect(() => {
 
-    ClinicaService.getClinicas(page + 1, limit, unidadeId)
+    if(JSON.parse(localStorage.getItem("@app-user")).perfil !== 'ADMINISTRADOR') {
+      navigate("/app/401", {}); 
+    }
+
+    InsumoService.getInsumos(page + 1, limit)
       .then((result) => {
         setLoading(false);
         setLpageable(result.data);
@@ -204,40 +206,37 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
               <TableRow>
                 <StyledTableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedClinicaIds.length === lpageable.content.length}
+                    checked={selectedInsumoIds.length === lpageable.content.length}
                     color="primary"
                     indeterminate={
-                      selectedClinicaIds.length > 0
-                      && selectedClinicaIds.length < lpageable.content.length
+                      selectedInsumoIds.length > 0
+                      && selectedInsumoIds.length < lpageable.content.length
                     }
                     onChange={handleSelectAll}
                   />
                 </StyledTableCell>
                 <StyledTableCell>
-                  Clínica
+                  Insumo
                 </StyledTableCell>
-                <StyledTableCell align="center">
-                  Sigla
+                <StyledTableCell>
+                  Unidade
                 </StyledTableCell>
-                <StyledTableCell align="center">
-                  Permite acompanhante
-                </StyledTableCell>
-                <StyledTableCell align="center">
+                <StyledTableCell>
                   Ações
                 </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {lpageable.content.slice(0, limit).map((clinica) => (
+              {lpageable.content.slice(0, limit).map((insumo) => (
                 <TableRow
                   hover
-                  key={clinica.id}
-                  selected={selectedClinicaIds.indexOf(clinica.id) !== -1}
+                  key={insumo.id}
+                  selected={selectedInsumoIds.indexOf(insumo.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedClinicaIds.indexOf(clinica.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, clinica.id)}
+                      checked={selectedInsumoIds.indexOf(insumo.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, insumo.id)}
                       value="true"
                     />
                   </TableCell>
@@ -250,26 +249,23 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
                         color="textPrimary"
                         variant="body1"
                       >
-                        {clinica.descricao}
+                        {insumo.descricao}
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell align="center">
-                    {clinica.sigla}
+                  <TableCell>
+                    {insumo.unidade}
                   </TableCell>
-                  <TableCell align="center">
-                    {clinica.permiteAcompanhante ? <Check /> : <Block />}
-                  </TableCell>
-                  <TableCell align="center">
+                  <TableCell>
                     <Typography>
                       <IconButton
-                        title="Editar clínica"
-                        onClick={(event) => handleAlterClinica(clinica.id)}>
+                        title="Editar insumo"
+                        onClick={(event) => handleAlterInsumo(insumo.id)}>
                         <Edit color="primary" />
                       </IconButton>
                       <IconButton
-                        title="Excluir clínica" color="secondary"
-                        onClick={(event) => handleDeleteClinica(clinica.id)}>
+                        title="Excluir insumo" color="primary"
+                        onClick={(event) => handleDeleteInsumo(insumo.id)}>
                           <Delete />
                       </IconButton>
                     </Typography>

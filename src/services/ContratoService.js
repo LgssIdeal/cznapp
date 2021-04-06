@@ -92,5 +92,53 @@ export default {
         'headers' : {
           'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
         }
+      }),
+  getRefeicoesAcompanhante: (contratoId) =>
+      instance({
+        'method': 'GET',
+        'url': '/refeicoescontratoacompanhante/' + contratoId,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
+      }),
+  addRefeicaoContratoAcompanhante: (contratoId, refeicao) =>
+      instance({
+        'method': 'POST',
+        'url': '/refeicoescontratoacompanhante/' + contratoId + '/' + refeicao,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
+      }),
+  excluiRefeicaoAcompanhante: (refeicaoId) =>
+      instance({
+        'method': 'DELETE',
+        'url': '/refeicoescontratoacompanhante/'+refeicaoId,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
+      }),
+  getRefeicoesPlantonista: (contratoId) =>
+      instance({
+        'method': 'GET',
+        'url': '/refeicoescontratoplantonista/' + contratoId,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
+      }),
+  addRefeicaoContratoPlantonista: (contratoId, refeicao) =>
+      instance({
+        'method': 'POST',
+        'url': '/refeicoescontratoplantonista/' + contratoId + '/' + refeicao,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
+      }),
+  excluiRefeicaoPlantonista: (refeicaoId) =>
+      instance({
+        'method': 'DELETE',
+        'url': '/refeicoescontratoplantonista/'+refeicaoId,
+        'headers' : {
+          'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        }
       })
 }
