@@ -93,7 +93,6 @@ const Results = ({ className, pageable, ...rest }) => {
   };
 
   const handleAlterUser = (idUser) => {
-    console.log("User ID: ", idUser);
     navigate('/app/usuario/' + idUser, {replace : true});
   }
 

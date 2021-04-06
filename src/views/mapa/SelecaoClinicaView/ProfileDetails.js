@@ -136,7 +136,6 @@ const ProfileDetails = ({ className, ...rest }) => {
   };
   
   const handleSubmit = ( () => {
-    console.log("Submitting ....");
     let expires = (60*60);
     setCookie('mapaClienteSel', values.cliente, {path: '/', maxAge: expires});
     setCookie('mapaUnidadeSel', values.unidade, {path: '/', maxAge: expires});

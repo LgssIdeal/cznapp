@@ -81,7 +81,6 @@ const ProfileDetails = ({ className, unidadeSel, clienteSel, clinicaSel, ...rest
         alert("Clínica gravada com sucesso.");
         setLoading(false);
         var url = "/app/clinicas/" + clienteSel.id + "/" + unidadeSel.id;
-        console.log("Cria/Altera clinica url: ", url);
         navigate(url, {replace : true});
       })
       .catch((error) => {

@@ -101,7 +101,6 @@ const ProfileDetails = ({ className, cautelaId, ...rest }) => {
   }, [cautela])
 
   const handleChange = (event) => {
-    console.log("EVENT", event.target.name + " - " + event.target.value);
     setValues({
       ...values,
       [event.target.name]: event.target.value
@@ -123,7 +122,7 @@ const ProfileDetails = ({ className, cautelaId, ...rest }) => {
     const data = {
       cautela: {
         id: null,
-        dataReferencia: values.dataReferencia,
+        dataReferencia: new Date(values.dataReferencia + " 00:00:00") ,
         dataCriacao: null,
         usuarioCriacao: JSON.parse(localStorage.getItem("@app-user")),
         dataAlteracao: null,
@@ -132,7 +131,7 @@ const ProfileDetails = ({ className, cautelaId, ...rest }) => {
       },
       itens: itens
     }
-
+    
     const json = JSON.stringify(data);
         
     CautelaService.criaCautela(json)
@@ -147,6 +146,7 @@ const ProfileDetails = ({ className, cautelaId, ...rest }) => {
         })
       })
       .finally(() => setLoading(false));
+      
           
   });
 

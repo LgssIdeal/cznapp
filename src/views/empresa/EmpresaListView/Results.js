@@ -89,7 +89,6 @@ const Results = ({ className, pageable, ...rest }) => {
   };
 
   const handleAlterEmpresa = (idEmpresa) => {
-    console.log("Empresa ID: ", idEmpresa);
     navigate('/app/empresa/' + idEmpresa, {replace : true});
   }
 
@@ -168,7 +167,6 @@ const Results = ({ className, pageable, ...rest }) => {
       .catch((error) => {
         setLoading(false);
         if(error.data) {
-          console.log(error.request);
           setErrorMsg(error.data);
         } else {
           setTokenExpired(true)

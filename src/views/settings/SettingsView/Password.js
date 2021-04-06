@@ -71,7 +71,6 @@ const Password = ({ className, ...rest }) => {
 
   const doSubmit = () => {
     setLoading(true);
-    console.log('Senha/Confirmação: ', values.password + '/' + values.confirm);
     const params = new URLSearchParams();
     params.append('senha', values.password);
     params.append('confirmacao', values.confirm);

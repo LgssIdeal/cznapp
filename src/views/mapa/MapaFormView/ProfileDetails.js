@@ -119,7 +119,6 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     
     MapaService.getMapa(mapaId)
       .then((result) => {
-        console.log(result.data);
         setMapaSel(result.data);
       })
       .catch((error) => {

@@ -191,7 +191,6 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
         setClinicaSel(result.data)
       })
       .catch((error) => {
-        console.log("ERROR", error)
         if(error.response) {
           setError(error.response.data.detail);
         } else {
@@ -228,7 +227,6 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
         setRefsDisp(result.data);
       })
       .catch((error) => {
-        console.log("ERROR", error)
         if(error.response) {
           setError(error.response.data.detail);
         } else {
@@ -318,15 +316,12 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
 
     var json = JSON.stringify(data);
 
-    console.log("Data", json);
-
     SolicitacaoService.criaSolicitacao(json)
       .then((result) => {
         alert("Solicitação criada");
         navigate("/app/solicitacoes/" + contratoId + "/" + unidadeId + "/" + clinicaId + "/" + dataReferencia, {replace: true});    
       })
       .catch((error) => {
-        console.log("ERROR", error);
         if(error.response) {
           setError(error.response.data.detail);
         } else {
@@ -380,21 +375,14 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
         setTpsComp([]);
       }
       
-      if(tpsComp) {
-        console.log(tpsComp.filter(function (item)  {
-          return item.selecionado;
-        }));
-      }
     }
     
   });
 
   const handleDeleteExtra = (id) => {
     var index;
-    console.log(extras.length);
     for(var i = 0; i < extras.length; i++) {
       if(extras[i].id === id)  {
-        console.log("achou")
         index = i;
         break;
       }
@@ -416,7 +404,6 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
   }
 
   const handleCheckRefeicao = (event) => {
-    console.log('Id: [' + event.target.id + '] Checked: [' + event.target.checked + ']');
     let refs = [...refsDispSel];
     for(var i = 0; i < refs.length; i++) {
       if(refs[i].refeicao === event.target.id) {

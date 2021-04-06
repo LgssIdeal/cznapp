@@ -337,20 +337,15 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, dataRefer
         navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/' + solicitacaoId, {replace : true});
       })
       .catch((error) => {
-        console.log("Passo", 1);
-        console.log("Error", error.response);
+
         if(error.response.data) {
-          console.log("Passo", 2);
           setError(error.response.data.detail);
         } else {
-          console.log("Passo", 3);
+
           var e = JSON.stringify(error);
           if(e.includes("401")) {
-            console.log("Passo", 4);
             navigate("/", {});
-          } else {
-            console.log("Passo", 5);
-            
+          } else {            
             setError(e);            
           }
         }

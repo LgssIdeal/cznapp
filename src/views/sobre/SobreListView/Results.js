@@ -51,7 +51,6 @@ const Results = ({ className, ...rest }) => {
       .catch((error) => {
         setLoading(false);
         if(error.data) {
-          console.log(error.request);
           setErrorMsg(error.data);
         } else {
           setTokenExpired(true)

@@ -83,11 +83,6 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   }
 
   useEffect(() => {
-    console.log("Contrato id: ", contratoId);
-    console.log("Unidade id: ", unidadeId);
-    console.log("Clinica id: ", clinicaId);
-    console.log("Page: ", (page + 1));
-    console.log("Size: ", limit);
     setLoading(true);
     SolicitacaoService.getSolicitacoes(contratoId, unidadeId, clinicaId, dataReferencia, (page + 1), limit)
       .then((result) => {

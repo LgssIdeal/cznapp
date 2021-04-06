@@ -32,7 +32,6 @@ const Toolbar = ({ className, clienteId, ...rest }) => {
 
   const handleClick = (() => {
     var url = '/app/tiposdieta/' + 0;
-    console.log("URL: ", url);
     navigate(url, {});
   });
 

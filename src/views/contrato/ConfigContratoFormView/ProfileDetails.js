@@ -184,7 +184,6 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
   }, [contratoId, reload]);
 
   useEffect(() => {
-    console.log("Contrato: ", contrato);
     if(contrato) {
       setLoading(true);
       UnidadeService.getUnidadesList(contrato.cliente.id)

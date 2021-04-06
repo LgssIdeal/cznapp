@@ -34,8 +34,6 @@ const useStyles = makeStyles(() => ({
 const Profile = ({ className, userSel, ...rest }) => {
   const classes = useStyles();
 
-  //console.log("User selecionado: ", userSel);
-
   return (
     <Card
       className={clsx(classes.root, className)}

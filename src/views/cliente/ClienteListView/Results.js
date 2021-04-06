@@ -89,7 +89,6 @@ const Results = ({ className, pageable, ...rest }) => {
   };
 
   const handleAlterCliente = (idCliente) => {
-    console.log("Cliente ID: ", idCliente);
     navigate('/app/cliente/' + idCliente, {replace : true});
   }
 
@@ -171,7 +170,6 @@ const Results = ({ className, pageable, ...rest }) => {
       .catch((error) => {
         setLoading(false);
         if(error.data) {
-          console.log(error.request);
           setErrorMsg(error.data);
         } else {
           setTokenExpired(true)

@@ -164,7 +164,6 @@ const Results = ({ className, clienteId, unidadeId, pageable, ...rest }) => {
       .catch((error) => {
         setLoading(false);
         if(error.data) {
-          console.log(error.request);
           setErrorMsg(error.data);
         } else {
           setTokenExpired(true)

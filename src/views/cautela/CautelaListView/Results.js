@@ -20,14 +20,11 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Alarm,
   SearchOutlined,
-  ThumbUpAltOutlined,
   CancelOutlined,
-  DoneOutlined,
-  DoneOutline} from '@material-ui/icons'
+  DoneOutlined} from '@material-ui/icons'
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import InsumoService from '../../../services/InsumoService';
 import CautelaService from '../../../services/CautelaService';
 import {Alert} from '@material-ui/lab';
 import { zonedTimeToUtc, format } from 'date-fns-tz';
@@ -197,7 +194,6 @@ const Results = ({ className, pageable, ...rest }) => {
       .catch((error) => {
         setLoading(false);
         if(error.data) {
-          console.log(error.request);
           setErrorMsg(error.data);
         } else {
           setTokenExpired(true)
@@ -246,7 +242,7 @@ const Results = ({ className, pageable, ...rest }) => {
                   Usuário criação
                 </StyledTableCell>
                 <StyledTableCell>
-                  Data de referẽncia
+                  Data de referência
                 </StyledTableCell>
                 <StyledTableCell>
                   Última alteração

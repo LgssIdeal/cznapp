@@ -74,12 +74,10 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
   useEffect(() => {
     ContratoService.getContrato(contratoId)
       .then((result) => {
-        console.log(result.data);
         setContratoSel(result.data);
       })
       .catch((error) => {
         if(error.response.data) {
-          console.log("Status", error.response.data.status);
           if(error.response.data.status !== 404) {
             setError(error.response.data.detail);
           }
@@ -91,14 +89,10 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
   },[contratoId])
 
   useEffect(() => {
-    console.log("Passo 2");
     setLoading(true);
 
     var vigIni = moment(contratoSel.vigenciaInicial).format("YYYY-MM-DD");
     var vigFim = moment(contratoSel.vigenciaFinal).format("YYYY-MM-DD");
-
-    console.log("vigIni", vigIni);
-    console.log("vigFim", vigFim);
     
     setValues({
       id : contratoSel.id,
@@ -110,7 +104,6 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
       tipoFaturamento : contratoSel.tipoFaturamento,
       ativo : contratoSel.ativo
     });
-    console.log(contratoSel);
     ClienteService.getClientesList()
       .then((result) => {
         setLoading(false)

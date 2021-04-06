@@ -61,7 +61,6 @@ const TopBar = ({
           <IconButton color="inherit"
             onClick={(() => {
               let usuario = JSON.parse(localStorage.getItem("@app-user"));
-              //console.log("usuario: ", usuario.nome);
               localStorage.removeItem("@app-user");
               setUser(null);
               navigate('/', { replace: true });
@@ -80,7 +79,6 @@ const TopBar = ({
           <IconButton color="inherit"
             onClick={(() => {
               let usuario = JSON.parse(localStorage.getItem("@app-user"));
-              //console.log("usuario: ", usuario.nome);
               localStorage.removeItem("@app-user");
               setUser(null);
               navigate('/', { replace: true });

@@ -168,7 +168,6 @@ const Results = ({ className, pageable, ...rest }) => {
       })
       .catch((error) => {
         if(error.data) {
-          //console.log(error.request);
           setLoading(false);
           setErrorMsg(error.data);
         } else {

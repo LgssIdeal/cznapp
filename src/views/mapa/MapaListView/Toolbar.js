@@ -32,7 +32,6 @@ const Toolbar = ({ className, clinicaId, ...rest }) => {
 
   const handleClick = (() => {
     var url = '/app/mapas/' + clinicaId + '/' + 0;
-    console.log("URL: ", url);
     navigate(url, {});
   });
 

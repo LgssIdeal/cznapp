@@ -33,7 +33,6 @@ const Toolbar = ({ className, clienteId, unidadeId, ...rest }) => {
 
   const handleClick = (() => {
     var url = '/app/clinicas/' + clienteId + '/' + unidadeId + '/' + 0;
-    console.log("URL: ", url);
     navigate(url, {});
   });
 

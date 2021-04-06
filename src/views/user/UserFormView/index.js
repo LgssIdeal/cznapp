@@ -55,10 +55,6 @@ const UserFormView = () => {
 
   //setParamUserId(userId);
 
-  //console.log("UserID: ", userId);
-
-  
-
   return (
     <Page
       className={classes.root}

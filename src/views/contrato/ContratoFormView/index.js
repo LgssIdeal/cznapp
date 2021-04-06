@@ -27,20 +27,7 @@ const ContratoFormView = () => {
   
   let {contratoId}  = useParams();
 
-  /*
-  useEffect(() => {
-    ContratoService.getContrato(contratoId)
-      .then((result) => {
-        setContratoSel(result.data)
-        console.log("contratoSel ", contratoSel);
-      })
-      .catch((error) => {
-        setErrorMsg(error.data);
-        
-      });    
-  }, [contratoId]);
-  */
-
+  
   return (
     <Page
       className={classes.root}

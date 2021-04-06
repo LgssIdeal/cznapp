@@ -45,7 +45,6 @@ const LoginView = () => {
         navigate('/app/dashboard', { replace: true });
       })
       .catch((error) => {
-        console.log("!!!!ERROR", error);
         setLoading(false);
         if(error.response) {
           setErrorMsg(error.response.data.detail);

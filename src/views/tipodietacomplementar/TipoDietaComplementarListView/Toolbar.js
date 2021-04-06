@@ -32,7 +32,6 @@ const Toolbar = ({ className, tipoDietaId, ...rest }) => {
 
   const handleClick = (() => {
     var url = '/app/tiposdietacomplementar/tipodieta/' + tipoDietaId + '/' + 0;
-    console.log("URL: ", url);
     navigate(url, {});
   });
 

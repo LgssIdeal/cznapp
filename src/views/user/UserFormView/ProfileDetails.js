@@ -80,8 +80,6 @@ const ProfileDetails = ({ className, userSel, ...rest }) => {
 
   const handleSubmit = ( () => {
 
-    console.log("Values: ", values);
-
     if(values.nome === '') {
       setError("Informe o nome do usuário")
     } else {

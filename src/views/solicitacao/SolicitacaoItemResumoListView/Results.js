@@ -67,7 +67,6 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
     setLoading(true);
     SolicitacaoService.getItensResumo(solicitacaoId)
       .then((result) => {
-        console.log(result.data);
         setLoading(false);
         setItens(result.data);
       })
