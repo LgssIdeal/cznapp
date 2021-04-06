@@ -38,33 +38,36 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          {/*<Typography>{children}</Typography> */}
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
 const ProfileDetails = ({ className, contratoId, ...rest }) => {
 
-  function TabPanel(props) {
-    const { children, value, index, ...other } = props;
   
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box p={3}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-
-  TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-  };
 
   const navigate = useNavigate();
   const classes = useStyles();
@@ -90,7 +93,7 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
     severity: ""
   });
 
-  const [values, setValues] = useState({
+  const [valores, setValores] = useState({
     contratoId: contratoId,
     refeicao: "",
     valor: ""
@@ -294,14 +297,14 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
 
   const handleSubmit = () => {
     setLoading(true);
-    if(values.refeicao === '') {
+    if(valores.refeicao === '') {
       setLoading(false)
       setError({
         msg: 'Informe a refeição',
         severity: "warning"
       })
     } else {
-      if(values.valor === '') {
+      if(valores.valor === '') {
         setLoading(false);
         setError({
           msg: "Informe o valor",
@@ -310,9 +313,9 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
       } else {
         const params = new URLSearchParams();
         params.append('refeicaoContratoId', '');
-        params.append('contratoId', values.contratoId);
-        params.append('refeicao', values.refeicao);
-        params.append('valor', values.valor);
+        params.append('contratoId', valores.contratoId);
+        params.append('refeicao', valores.refeicao);
+        params.append('valor', valores.valor);
         RefeicaoContratoService.gravaRefeicaoContrato(params)
           .then((result) => {
             setLoading(false);
@@ -320,8 +323,8 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
               msg: "Refeição incluída com sucesso",
               severity: "success"
             });
-            setValues({
-              ...values,
+            setValores({
+              ...valores,
               refeicao: "",
               valor: ""
             });
@@ -585,9 +588,8 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
   }
 
   const handleChange = (event) => {
-    
-    setValues({
-      ...values,
+    setValores({
+      ...valores,
       [event.target.name]: event.target.value
     });
   };
@@ -649,21 +651,19 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
           <Tab label="Refeições de plantonista" {...a11yProps(3)}/>
         </Tabs>
       </AppBar>
-      <TabPanel value={tabValue} index={0}>
+      <TabPanel value={tabValue} index={0} key={0}>
         <Card xs={12} md={12}>
           <CardHeader
             subheader="Informe os dados e clique adicionar."
-            title="Valores do contrato"
-          />
-          {error.msg && 
-            <Alert severity={error.severity}>{error.msg}</Alert>}
-          {loading && 
-            <LinearProgress></LinearProgress>}
+            title="Valores do contrato" />
           <Divider />
           <CardContent>
-            <Grid container spacing={1}>
+            {error.msg && 
+              <Alert severity={error.severity}>{error.msg}</Alert>}
+            {loading && 
+            <LinearProgress></LinearProgress>}
+            <Grid container spacing={2}>
               <Grid item md={4} xs={12} >
-                
                 <TextField
                   fullWidth
                   onChange={handleChange}
@@ -673,8 +673,9 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
                   SelectProps={{ native: true }}
                   name="refeicao"
                   label="Refeição"
+                  key={"refeicao"}
                   disabled={loading}
-                  value={values.refeicao}>
+                  value={valores.refeicao}>
                   {
                     refeicoes.map((option) =>(
                       <option key={option.id} value={option.id}>{option.value}</option>
@@ -692,10 +693,9 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
                   variant="outlined"
                   name="valor"
                   label="Valor"
+                  key="valor"
                   disabled={loading}
-                  value={values.valor}>
-                </TextField>
-                
+                  value={valores.valor} />                
               </Grid>
               <Grid item md={4} xs={12} >
                 <Button
@@ -708,51 +708,52 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
                 </Button>
               </Grid>
             </Grid>
+            <Box p={2}>
             <Grid container spacing={1}>    
-              <Grid item md={12} xs={12} >
-                <PerfectScrollbar>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <StyledTableCell>
-                          Refeição
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          Valor
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          Ação
-                        </StyledTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {refeicoesContrato.map((ref) => (
-                        <TableRow
-                          hover
-                          key={ref.id}>
-                          <TableCell>
-                            {map.get(ref.refeicao)}
-                          </TableCell>
-                          <TableCell>
-                            {'R$ ' + ref.valor.toString().replace(".", ",")}
-                          </TableCell>
-                          <TableCell>
-                            <Typography>
-                              <IconButton
-                                title="Excluir refeição" color="primary"
-                                onClick={(event) => handleDeleteRefeicao(ref.id)}>
-                                  <Delete />
-                              </IconButton>
-                            </Typography>
-                          </TableCell>
+                <Grid item md={12} xs={12} >
+
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell>
+                            Refeição
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            Valor
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            Ação
+                          </StyledTableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </PerfectScrollbar>
+                      </TableHead>
+                      <TableBody>
+                        {refeicoesContrato.map((ref) => (
+                          <TableRow
+                            hover
+                            key={ref.id}>
+                            <TableCell>
+                              {map.get(ref.refeicao)}
+                            </TableCell>
+                            <TableCell>
+                              {'R$ ' + ref.valor.toString().replace(".", ",")}
+                            </TableCell>
+                            <TableCell>
+                              <Typography>
+                                <IconButton
+                                  title="Excluir refeição" color="primary"
+                                  onClick={(event) => handleDeleteRefeicao(ref.id)}>
+                                    <Delete />
+                                </IconButton>
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+
+                </Grid>
               </Grid>
-            </Grid>
-            
+            </Box>
             <Grid container spacing={3}>
               <Grid item md={12} xs={12} >
                 <Button
@@ -768,7 +769,7 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
           </CardContent>
         </Card>
       </TabPanel>
-      <TabPanel value={tabValue} index={1}>
+      <TabPanel value={tabValue} index={1} key={1}>
         <Card xs={12} md={12}>
           <CardHeader
             subheader="Informe os dados e clique adicionar."
@@ -855,7 +856,7 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
           </CardContent>
         </Card>
       </TabPanel>
-      <TabPanel value={tabValue} index={2}>
+      <TabPanel value={tabValue} index={2} key={2}>
         <Card xs={12} md={12}>
           <CardHeader
             subheader="Informe os dados e clique adicionar."
