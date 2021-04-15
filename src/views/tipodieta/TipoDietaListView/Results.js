@@ -18,7 +18,7 @@ import {
   LinearProgress
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import {Edit, Delete, Dehaze} from '@material-ui/icons'
+import {Edit, Delete, Dehaze, Block, Check} from '@material-ui/icons'
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -221,10 +221,13 @@ const Results = ({ className, pageable, ...rest }) => {
                 <StyledTableCell>
                   Tipo de dieta
                 </StyledTableCell>
-                <StyledTableCell>
+                <StyledTableCell align="center">
                   Sigla
                 </StyledTableCell>
-                <StyledTableCell>
+                <StyledTableCell align="center">
+                  Considera no fatur.
+                </StyledTableCell>
+                <StyledTableCell align="center">
                   Ações
                 </StyledTableCell>
               </TableRow>
@@ -256,10 +259,13 @@ const Results = ({ className, pageable, ...rest }) => {
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     {tipoDieta.sigla}
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
+                    {tipoDieta.fatura ? <Check color="primary"></Check> : <Block color="error"></Block>}
+                  </TableCell>
+                  <TableCell align="center">
                     <Typography>
                       <IconButton
                         title="Editar tipo de dieta"

@@ -12,7 +12,9 @@ import {
   Grid,
   TextField,
   makeStyles,
-  LinearProgress
+  LinearProgress,
+  FormControlLabel,
+  Switch
 } from '@material-ui/core';
 
 import {Alert} from '@material-ui/lab';
@@ -30,7 +32,8 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
   const [values, setValues] = useState({
     id: '',
     descricao: '',
-    sigla: ''
+    sigla: '',
+    fatura: false
   });
   const [invalidToken, setInvalidToken] = useState(false);
 
@@ -40,7 +43,8 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
         setValues({
           id: result.data.id,
           descricao: result.data.descricao,
-          sigla: result.data.sigla
+          sigla: result.data.sigla,
+          fatura: result.data.fatura
         });
       })
       .catch((error) => {
@@ -52,7 +56,8 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
             setValues({
               id: '',
               descricao: '',
-              sigla: ''
+              sigla: '',
+              fatura: false
             });
           } else {
             if(e.includes("401")) {
@@ -86,12 +91,20 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
     navigate('/app/tiposdieta', {replace : true});
   });
 
+  const handleCheck = (event) => {
+    setValues({
+      ...values,
+      [event.target.name]: event.target.checked
+    });
+  };
+
   const handleSubmit = ( () => {
     setLoading(true);
     const data = {
       id : values.id,
       descricao : values.descricao,
-      sigla : values.sigla
+      sigla : values.sigla,
+      fatura: values.fatura
     }
 
     const json = JSON.stringify(data);
@@ -162,6 +175,19 @@ const ProfileDetails = ({ className, tipoDieta, ...rest }) => {
                 value={values.sigla}
                 variant="outlined"
               />
+            </Grid>
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControlLabel 
+                control={<Switch 
+                          checked={values.fatura} 
+                          onChange={handleCheck} 
+                          name="fatura"
+                          color="primary"/>}
+                label={"Considera no faturamento"}/>
             </Grid>
           </Grid>
         </CardContent>

@@ -38,8 +38,8 @@ const MapaFormView = () => {
         >
           <Grid
             item
-            lg={10}
-            md={10}
+            lg={8}
+            md={8}
             xs={12}
           >
             <ProfileDetails clinicaId={clinicaId} mapaId={mapaId}/>

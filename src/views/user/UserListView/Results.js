@@ -19,7 +19,7 @@ import {
   LinearProgress
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import {Edit, Delete} from '@material-ui/icons'
+import {Edit, Delete, Cached} from '@material-ui/icons'
 import getInitials from '../../../utils/getInitials';
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert, alert } from 'react-confirm-alert';
@@ -96,6 +96,68 @@ const Results = ({ className, pageable, ...rest }) => {
     navigate('/app/usuario/' + idUser, {replace : true});
   }
 
+  const handleResetSenha = (usuarioId) => {
+    setLoading(true);
+    confirmAlert({
+      title: 'Confirmação',
+      message: 'Deseja redefinir a senha do usuário?',
+      buttons: [
+        {
+          label:'Sim',
+          onClick: () => {
+
+            UsuarioService.resetaSenha(usuarioId)
+              .then((result) => {
+                  
+                confirmAlert({
+                  title: 'Informação',
+                  message: 'Senha redefinida.',
+                  buttons: [
+                    {
+                      label: 'Ok',
+                      onClick: () => {
+                        if(reload === 0) {
+                          setReload(1);
+                        } else {
+                          setReload(0);
+                        }
+                      }
+                    }
+                  ]
+                });
+              })
+              .catch((error) => {
+                if(error.data) {
+                  setErrorMsg(error.data);
+                } else {
+                  setTokenExpired(true)
+                }
+                
+            });  
+          }
+        },
+        {
+          label: 'Não',
+          onClick: () => {
+            /*
+            confirmAlert({
+              title: 'Informação',
+              message: 'Ação cancelada',
+              buttons: [
+                {
+                  label: 'Ok',
+                  onClick: () => {}
+                }
+              ]
+            });
+            */
+           setLoading(false);
+          }
+        }
+      ]
+    })
+  }
+
   const handleDeleteUser = (idUser) => {
 
     confirmAlert({
@@ -139,16 +201,19 @@ const Results = ({ className, pageable, ...rest }) => {
         {
           label: 'Não',
           onClick: () => {
+            /*
             confirmAlert({
               title: 'Informação',
               message: 'Exclusão cancelada',
               buttons: [
                 {
                   label: 'Ok',
-                  onClick: () => {}
+                  onClick: () => {setLoading()}
                 }
               ]
             });
+            */
+           setLoading(false);
           }
         }
       ]
@@ -163,6 +228,8 @@ const Results = ({ className, pageable, ...rest }) => {
 
 
   useEffect(() => {
+
+    const ac = new AbortController();
 
     if(JSON.parse(localStorage.getItem("@app-user")).perfil !== 'ADMINISTRADOR') {
       navigate("/app/401", {}); 
@@ -181,6 +248,8 @@ const Results = ({ className, pageable, ...rest }) => {
           setTokenExpired(true)
         }
       });
+
+      return () => ac.abort()
 
   }, [page, limit, reload]);
 
@@ -238,7 +307,7 @@ const Results = ({ className, pageable, ...rest }) => {
                 <StyledTableCell>
                   Login
                 </StyledTableCell>
-                <StyledTableCell>
+                <StyledTableCell align="center">
                   Ações
                 </StyledTableCell>
               </TableRow>
@@ -285,7 +354,7 @@ const Results = ({ className, pageable, ...rest }) => {
                   <TableCell>
                     {user.login}
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     <Typography>
                       <IconButton
                         aria-label="Editar usuário"
@@ -296,6 +365,11 @@ const Results = ({ className, pageable, ...rest }) => {
                         aria-label="Excluir usuário" color="secondary"
                         onClick={(event) => handleDeleteUser(user.id)}>
                           <Delete />
+                        </IconButton>
+                        <IconButton
+                        aria-label="Resetar a senha" color="secondary"
+                        onClick={(event) => handleResetSenha(user.id)}>
+                          <Cached />
                         </IconButton>
                     </Typography>
                   </TableCell>

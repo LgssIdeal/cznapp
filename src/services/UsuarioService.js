@@ -37,5 +37,13 @@ export default {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : ''),
         'Content-Type' : 'application/x-www-form-urlencoded'
       }
+    }),
+  resetaSenha: (usuarioId) =>
+    instance({
+      'method': 'POST',
+      'url': '/usuarios/reset/' + usuarioId,
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : ''),
+      }
     })
 }

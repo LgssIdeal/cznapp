@@ -69,15 +69,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     clinica: clinicaId,
     leito: '',
     paciente: '',
-    dataNascimento: '',
-    tipoIdenticacao: '',
-    identificacao: '',
     tipoDieta: 0,
     tiposDietaComplementar: [],
     tipoDietaAcomp: 0,
     tiposDietaComplementarAcomp: [],
     dieta: '',
-    observacoes: ''
+    observacoes: '',
+    idade: ''
   });
 
   const userId = JSON.parse(localStorage.getItem("@app-user")).id;
@@ -88,15 +86,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     clinica: clinicaId,
     leito: '',
     paciente: '',
-    dataNascimento: '',
-    tipoIdenticacao: '',
-    identificacao: '',
     tipoDieta: 0,
     tiposDietaComplementar: [],
     tipoDietaAcomp: 0,
     tiposDietaComplementarAcomp: [],
     dieta: '',
-    observacoes: ''
+    observacoes: '',
+    idade: ''
   });
 
   /* Utilizado para os checkbox dinâmicos para seleção das dietas complementares
@@ -131,15 +127,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
               clinica: clinicaId,
               leito: '',
               paciente: '',
-              dataNascimento: '1900-01-01',
-              tipoIdentificacao: '',
-              identificacao: '',
               tipoDieta: 0,
               tiposDietaComplementar: [],
               tipoDietaAcomp: 0,
               tiposDietaComplementarAcomp: [],
               dieta: '',
-              observacoes: ''
+              observacoes: '',
+              idade: ''
             });
           }
         } else {
@@ -152,22 +146,19 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   useEffect(() => {
     setLoading(true);
     setTpsComp([]);
-    var dataNasc = moment(mapaSel.dataNascimento).format("YYYY-MM-DD");
     
     setValues({
       id: mapaSel.id,
       clinica: clinicaId,
       leito: mapaSel.leito,
       paciente: mapaSel.paciente,
-      dataNascimento: dataNasc,
-      tipoIdentificacao: mapaSel.tipoIdentificacao,
-      identificacao: mapaSel.identificacao,
       tipoDieta: mapaSel.tipoDieta.id,
       tiposDietaComplementar: mapaSel.tiposDietaComplementar.length > 0 ? mapaSel.tiposDietaComplementar : [],
       tipoDietaAcomp: mapaSel.tipoDietaAcomp ? mapaSel.tipoDietaAcomp.id : 0,
       tiposDietaComplementarAcomp: mapaSel.tiposDietaComplementarAcomp.length > 0 ? mapaSel.tiposDietaComplementarAcomp : [],
       dieta: mapaSel.dieta,
-      observacoes: mapaSel.observacoes
+      observacoes: mapaSel.observacoes,
+      idade: mapaSel.idade
     });
 
     TipoDietaService.getTiposDietaList()
@@ -403,15 +394,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     params.append('clinicaId', values.clinica);
     params.append('leito', values.leito);
     params.append('paciente', values.paciente);
-    params.append('dataNascimento', values.dataNascimento);
-    params.append('tipoIdentificacao', values.tipoIdentificacao);
-    params.append('identificacao', values.identificacao);
     params.append('tipoDietaId', values.tipoDieta);
     params.append('tiposDietaComplemetarId', tpCompSel);
     params.append('tipoDietaAcompId', values.tipoDietaAcomp);
     params.append('tiposDietaComplementarAcompId', tpCompAcompSel);
     params.append('observacoes', values.observacoes);
     params.append('usuarioId', userId);
+    params.append('idade', values.idade);
 
     MapaService.criaMapa(params)
       .then((result) => {
@@ -454,7 +443,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
           <Grid
             container
             spacing={3}
-            
+            direction="column"
           >
             <Grid
               item
@@ -494,66 +483,23 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
             </Grid>
             <Grid
               item
-              md={12}
+              md={3}
               xs={12}
             >
               
               <TextField
                 fullWidth
                 
-                name="dataNascimento"
-                helperText="Informe a data de nascimento"
+                name="idade"
+                helperText="Informe a idade do paciente"
                 onChange={handleChange}
                 required
-                value={values.dataNascimento}
+                value={values.idade}
                 variant="outlined"
-                type="date"
               >
               </TextField>  
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={6}
-            >
-              <TextField
-                fullWidth
-                label="Informe o tipo de identificação"
-                name="tipoIdentificacao"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.tipoIdentificacao}
-                variant="outlined"
-              >
-                <option value={0}></option>
-                {listIdentificacao.map((option) => (
-                  <option
-                    key={option.id}
-                    value={option.id}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={6}
-            >
-              <TextField
-                fullWidth
-                label="Identificação"
-                name="identificacao"
-                required
-                helperText="Informe a identificação"
-                onChange={handleChange}
-                value={values.identificacao}
-                variant="outlined"
-              ></TextField>
-            </Grid>
+            
           </Grid>
           <Card>
             <CardHeader title="Dieta" subheader="Informe a dieta do paciente"></CardHeader>

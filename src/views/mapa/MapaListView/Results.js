@@ -98,6 +98,7 @@ const Results = ({ className, pageable, ...rest }) => {
   }
 
   useEffect(() => {
+    const ac = new AbortController();
     setLoading(true);
 
     ClinicaService.getClinica(clinicaId)
@@ -133,6 +134,8 @@ const Results = ({ className, pageable, ...rest }) => {
 
         
       });
+
+      return () => ac.abort()
 
   }, [page, limit, reload]);
 
@@ -189,7 +192,7 @@ const Results = ({ className, pageable, ...rest }) => {
                   Paciente
                 </StyledTableCell>
                 <StyledTableCell>
-                  Data de Nascimento
+                  Idade
                 </StyledTableCell>
                 <StyledTableCell>
                   Dieta
@@ -233,10 +236,7 @@ const Results = ({ className, pageable, ...rest }) => {
                     {mapa.paciente}
                   </TableCell>
                   <TableCell>
-                    {format(
-                      zonedTimeToUtc(
-                        mapa.dataNascimento, 
-                        'America/Sao_Paulo'), "dd/MM/yyyy")}
+                    {mapa.idade}
                   </TableCell>
                   <TableCell>
                     {mapa.dieta}
