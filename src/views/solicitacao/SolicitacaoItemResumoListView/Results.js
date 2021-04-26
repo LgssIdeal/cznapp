@@ -25,13 +25,11 @@ import {
   Button
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import {Edit, FormatListNumbered} from '@material-ui/icons'
 import { useNavigate } from 'react-router-dom';
-import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import {useParams} from 'react-router-dom';
 import {Alert} from '@material-ui/lab';
 import { zonedTimeToUtc, format } from 'date-fns-tz';
+import Base64Downloader from 'react-base64-downloader';
 import SolicitacaoService from '../../../services/SolicitacaoService';
 import ClinicaService from '../../../services/ClinicaService';
 
@@ -54,6 +52,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
   const [itens, setItens] = useState([]);
   const [reload, setReload] = useState(0);
   const [clinicaSel, setClinicaSel] = useState();
+  const [pdf, setPdf] = useState('');
 
   const map = new Map();
   map.set("DESJEJUM", "Desjejum");
@@ -117,6 +116,25 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
 
   const handleGoBack = () => {
     navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia, {replace : true});
+  }
+
+  const handleGetPdf = () => {
+    setLoading(true);
+    SolicitacaoService.getItensResumoPdf(solicitacaoId)
+      .then((result) => {
+        
+        const linkSource = result.data;
+        const downloadLink = document.createElement("a");
+        const fileName = "resumo_" + dataReferencia + "_" + refeicao +".pdf";
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
+
+      })
+      .catch((error) => {
+        setErrorMsg(JSON.stringify(error))
+      })
+      .finally(() => setLoading(false));
   }
 
   const StyledTableCell = withStyles((theme) => ({
@@ -191,7 +209,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
           </Box>
         </PerfectScrollbar>
         <Grid container spacing={3}>
-          <Grid item md={2} xs={12}>
+          <Grid item md={2} xs={6}>
             <Button
                 fullWidth
                 color="secondary"
@@ -200,7 +218,19 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                 disabled={loading}>
                 Voltar
             </Button>
+            
           </Grid>
+          <Grid item md={2} xs={6}>
+            <Button
+                fullWidth
+                color="secondary"
+                variant="contained"
+                onClick={handleGetPdf}
+                disabled={loading}>
+                Gerar PDF
+            </Button>
+          </Grid>
+          
         </Grid>
       </CardContent>
     </Card>

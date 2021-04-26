@@ -583,7 +583,7 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
             <CardHeader title="Dieta acompanhante"></CardHeader>
             <CardContent>
               {!clinicaSel.permiteAcompanhante ? 
-              <Typography>Clínica permite acompanhante</Typography> : 
+              <Typography>Clínica não permite acompanhante</Typography> : 
               <Grid container spacing={3}>
                 <Grid item md={12} xs={12}>
                   <TextField

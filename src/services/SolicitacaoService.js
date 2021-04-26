@@ -41,10 +41,26 @@ export default {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
     }),
+  getItensPdf: (solicitacaoId) =>
+    instance({
+      'method': 'GET',
+      'url': '/solicitacaoitens/solicitacao/' + solicitacaoId + "/pdf",
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
   getItensResumo: (solicitacaoId) =>
     instance({
       'method': 'GET',
       'url': '/solicitacaoitens/solicitacao/' + solicitacaoId + '/resumo',
+      'headers' : {
+        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+      }
+    }),
+  getItensResumoPdf: (solicitacaoId) =>
+    instance( {
+      'method': 'GET',
+      'url': '/solicitacaoitens/solicitacao/' + solicitacaoId + '/resumo/pdf',
       'headers' : {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }

@@ -131,6 +131,25 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, dataRe
     navigate('/app/solicitacoes/' + contratoId + '/' + unidadeId + '/' + clinicaId + '/' + dataReferencia + '/' + solicitacaoId + '/' + solicitacaoItemId, {replace: true});
   }
 
+  const handleGetPdf = () => {
+    setLoading(true);
+    SolicitacaoService.getItensPdf(solicitacaoId)
+      .then((result) => {
+        
+        const linkSource = result.data;
+        const downloadLink = document.createElement("a");
+        const fileName = "mapaSolicitacoes_" + dataReferencia + "_" + solicitacaoId +".pdf";
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
+
+      })
+      .catch((error) => {
+        setErrorMsg(JSON.stringify(error))
+      })
+      .finally(() => setLoading(false));
+  }
+
   const StyledTableCell = withStyles((theme) => ({
     head: {
       backgroundColor: theme.palette.primary.main,
@@ -239,7 +258,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, dataRe
           </Box>
         </PerfectScrollbar>
         <Grid container spacing={3} direction="row">
-            <Grid item md={2} xs={6}>
+            <Grid item md={2} xs={4}>
               <Button
                   fullWidth
                   color="primary"
@@ -249,7 +268,7 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, dataRe
                   Novo
               </Button>
             </Grid>
-            <Grid item md={2} xs={6}>
+            <Grid item md={2} xs={4}>
               <Button
                   fullWidth
                   color="secondary"
@@ -259,6 +278,16 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, dataRe
                   Voltar
               </Button>
             </Grid>
+            <Grid item md={2} xs={4}>
+            <Button
+                fullWidth
+                color="secondary"
+                variant="contained"
+                onClick={handleGetPdf}
+                disabled={loading}>
+                Gerar PDF
+            </Button>
+          </Grid>
           </Grid>
       </CardContent>
     </Card>
