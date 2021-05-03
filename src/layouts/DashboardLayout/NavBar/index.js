@@ -31,7 +31,8 @@ import {
   BookOpen as BookOpenIcon,
   Coffee as CoffeeIcon,
   Clipboard as ClipboardIcon,
-  List as ListIcon
+  List as ListIcon,
+  ShoppingCart as ShoppingCartIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 
@@ -86,6 +87,11 @@ const items = [
     href: '/app/cautelas',
     icon: ListIcon,
     title: 'Cautelas'
+  },
+  {
+    href: '/app/faturamento',
+    icon: ShoppingCartIcon,
+    title: 'Faturamento'
   },
   {
     href: '/app/configuracoes',

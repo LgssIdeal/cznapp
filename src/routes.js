@@ -44,6 +44,7 @@ import SolicitacaoPlantonistaListView from './views/solicitacao/SolicitacaoPlant
 import SolicitacaoPlantonistaFormView from './views/solicitacao/SolicitacaoPlantonistaFormView';
 import CautelaListView from './views/cautela/CautelaListView';
 import CautelaFormView from './views/cautela/CautelaFormView';
+import RelatorioFormView from './views/faturamento/RelatorioFormView';
 
 const routes = [
   {
@@ -88,6 +89,7 @@ const routes = [
       { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:refeicao/:dataReferencia/:solicitacaoId/resumo', element: <SolicitacaoItemResumoListView /> },
       { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia/form', element: <SolicitacaoFormView /> },
       { path: 'solicitacoes/:contratoId/:unidadeId/:clinicaId/:dataReferencia/:solicitacaoId/:solicitacaoItemId', element: <SolicitacaoItemFormView /> },
+      { path: 'faturamento', element: <RelatorioFormView /> },
       { path: '401', element: <NotAuthorizedView /> },
       { path: '*', element: <Navigate to="/404" /> }
 
