@@ -39,18 +39,8 @@ export default {
       'url' : '/mapas',
       'data' : data,
       'headers' : {
-        'Content-Type' : 'application/x-www-form-urlencoded',
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : ''),
-        
-      }
-    }),
-  alteraContrato: (data) =>
-    instance({
-      'method' : 'PUT',
-      'url' : '/mapas',
-      'data' : data,
-      'headers' : {
-        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
+        'Content-Type' : 'application/json'
       }
     })
 }

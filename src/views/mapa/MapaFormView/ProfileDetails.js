@@ -18,15 +18,26 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
-  Typography
+  Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  IconButton
 } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Alert} from '@material-ui/lab';
+import {Delete} from '@material-ui/icons'
 import MapaService from '../../../services/MapaService';
 import TipoDietaService from '../../../services/TipoDietaService';
 import TipoDietaComplementarService from '../../../services/TipoDietaComplementarService';
 import ClinicaService from '../../../services/ClinicaService';
+import SuplementoService from '../../../services/SuplementoService';
 import moment from 'moment';
+import { ContactSupportOutlined } from '@material-ui/icons';
+import { ref } from 'yup';
 
 const listIdentificacao = [
   {
@@ -53,11 +64,40 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   const navigate = useNavigate();
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
+  const [errorSup, setErrorSup] = useState("");
   const [tiposDieta, setTiposDieta] = useState([]);
   const [tiposDietaComp, setTiposDietaComp] = useState([]);
   const [tiposDietaAcomp, setTiposDietaAcomp] = useState([]);
   const [tiposDietaCompAcomp, setTiposDietaCompAcomp] = useState([]);
+  const [itensSup, setItensSup] = useState([]);
+  const [suplementos, setSuplementos] = useState([]);
+  const [refeicoes, setRefeicoes] = useState([
+    {
+      refeicao: 'Desjejum',
+      sel: false
+    },
+    {
+      refeicao: 'Lanche 1',
+      sel: false
+    },
+    {
+      refeicao: 'Almoço',
+      sel: false
+    },
+    {
+      refeicao: 'Lanche 2',
+      sel: false
+    },
+    {
+      refeicao: 'Jantar',
+      sel: false
+    },
+    {
+      refeicao: 'Ceia',
+      sel: false
+    }
+  ]);
   const [clinicaSel, setClinicaSel] = useState({
     id: '',
     descricao: '',
@@ -95,6 +135,18 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     idade: ''
   });
 
+  const [valueSup, setValueSup] = useState({
+    supId: 0
+  });
+
+  const map = new Map();
+  map.set("DESJEJUM", "Desjejum");
+  map.set("LANCHE_1", "Lanche 1");
+  map.set("ALMOCO", "Almoço");
+  map.set("LANCHE_2", "Lanche 2");
+  map.set("JANTAR", "Jantar");
+  map.set("CEIA", "Ceia");
+
   /* Utilizado para os checkbox dinâmicos para seleção das dietas complementares
     {
       id: id do tipo de dieta complementar
@@ -112,35 +164,56 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
   /**********************************************/
 
   useEffect(() => {
-    
-    MapaService.getMapa(mapaId)
+
+    if(mapaId !== "0") {
+      MapaService.getMapa(mapaId)
       .then((result) => {
+        // grava o retorno do serviço para setar os campos
         setMapaSel(result.data);
+
+        // lógica para montar a tabela de suplementos
+        if(result.data.suplementos) {
+          let aux = [];
+
+          for(var i = 0; i < result.data.suplementos.length; i++) {
+            let refs= [];
+            for(var j = 0; j < result.data.suplementos[i].refeicoes.length; j++) {
+              const r = {
+                refeicao: map.get(result.data.suplementos[i].refeicoes[j].refeicao),
+                sel: true
+              }
+              refs.push(r);
+            }
+            const s = {
+              suplemento : result.data.suplementos[i].suplemento,
+              refeicoes: refs
+            }
+            aux.push(s);
+          }
+          setItensSup(aux);
+        }
       })
       .catch((error) => {
-        if(error.response.data) {
-          if(error.response.data.status !== 404) {
-            setError(error.response.data.detail);
-          } else {
-            setValues({
-              id: 0,
-              clinica: clinicaId,
-              leito: '',
-              paciente: '',
-              tipoDieta: 0,
-              tiposDietaComplementar: [],
-              tipoDietaAcomp: 0,
-              tiposDietaComplementarAcomp: [],
-              dieta: '',
-              observacoes: '',
-              idade: ''
-            });
-          }
-        } else {
-          setError(error.message);
-        }
+        setError(JSON.stringify(error));
+        setValues({
+          id: 0,
+          clinica: clinicaId,
+          leito: '',
+          paciente: '',
+          tipoDieta: 0,
+          tiposDietaComplementar: [],
+          tipoDietaAcomp: 0,
+          tiposDietaComplementarAcomp: [],
+          dieta: '',
+          observacoes: '',
+          idade: ''
+        });
+
           
       });
+    }
+    
+    
   },[mapaId])
 
   useEffect(() => {
@@ -319,6 +392,18 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       .finally(() => setLoading(false));
   }, [clinicaId])
 
+  useEffect(() => {
+    setLoading(true)
+    SuplementoService.getSuplementosList()
+      .then((result) => {
+        setSuplementos(result.data);
+      })
+      .catch((error) => {
+        setError(JSON.stringify(error))
+      })
+      .finally(() => setLoading(false));
+  }, [])
+
   const handleTipoDietaChange = (event) => {
     setValues({
       ...values,
@@ -333,6 +418,14 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       [event.target.name]: event.target.value
     });
   };
+
+  const handleSupChange = (event) => {
+    setValueSup({
+      ...valueSup,
+      [event.target.name]: event.target.value
+    });
+  };
+
 
   const handleTipoDietaAcompChange = (event) => {
     setValues({
@@ -362,6 +455,84 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     setTpsCompAcomp(tipos);
   }
 
+  const handleRefeicaoCheck = (event) => {
+    let refs = [...refeicoes];
+    for(var i = 0; i < refs.length; i++) {
+      if(refs[i].refeicao === event.target.id) {
+        refs[i].sel = event.target.checked;
+      }
+    }
+    setRefeicoes(refs);
+  }
+
+  const handleAddSuplemento = () => {
+    setErrorSup("")
+    if(parseInt(valueSup.supId) === 0) {
+      setErrorSup("Informe o suplemento")
+    } else {
+      var sel = false;
+      for(var i = 0; i < refeicoes.length; i++) {
+        if(refeicoes[i].sel) {
+          sel = true;
+        }
+      }
+      if(!sel) {
+        setErrorSup("Informe ao menos uma refeição")
+      } else {
+        const sup = suplementos.find(e => e.id === parseInt(valueSup.supId));
+        const refs = refeicoes.filter(function (e) {
+          return e.sel;
+        });
+        const data = {
+          suplemento: sup,
+          refeicoes: refs
+        }
+        setItensSup(old => [...old, data]);
+        const r = [
+          {
+            refeicao: 'Desjejum',
+            sel: false
+          },
+          {
+            refeicao: 'Lanche 1',
+            sel: false
+          },
+          {
+            refeicao: 'Almoço',
+            sel: false
+          },
+          {
+            refeicao: 'Lanche 2',
+            sel: false
+          },
+          {
+            refeicao: 'Jantar',
+            sel: false
+          },
+          {
+            refeicao: 'Ceia',
+            sel: false
+          }
+        ];
+        const v = {supId: 0};
+
+        setValueSup(v);
+        setRefeicoes(r);
+
+      }
+    }
+  }
+
+  const handleDelete = ((supId) => {
+    
+    //console.log("Indice: ", itensSup.findIndex(e => e.suplemento.id === supId));
+    let index = itensSup.findIndex(e => e.suplemento.id === supId);
+    const temp = [...itensSup];
+    temp.splice(index, 1);
+    setItensSup(temp);
+    
+  });
+
 
   const handleGoBack = (() => {
     navigate('/app/mapas/' + clinicaId, {replace : true});
@@ -389,6 +560,42 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       }
     }
 
+    let suplementos = [];
+    if(itensSup.length > 0) {
+      
+      for(var s = 0; s < itensSup.length; s++) {
+        let ref = [];
+        for(var p = 0; p < itensSup[s].refeicoes.length; p++) {
+          ref.push(itensSup[s].refeicoes[p].refeicao);
+        }
+        let data = {
+          suplementoId : itensSup[s].suplemento.id,
+          refeicoes: ref
+        }
+        suplementos.push(data);
+      }
+    }
+
+    const requestData = {
+      mapaId: values.id,
+      clinicaId: values.clinica,
+      leito: values.leito,
+      paciente: values.paciente,
+      tipoDietaId: values.tipoDieta,
+      tiposDietaComplemetarId: tpCompSel,
+      tipoDietaAcompId: values.tipoDietaAcomp,
+      tiposDietaComplementarAcompId: tpCompAcompSel,
+      observacoes: values.observacoes,
+      usuarioId: userId,
+      idade: values.idade,
+      suplementos: suplementos
+    };
+
+    const json = JSON.stringify(requestData);
+
+
+
+    /*
     const params = new URLSearchParams();
     params.append('mapaId', values.id);
     params.append('clinicaId', values.clinica);
@@ -401,8 +608,11 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     params.append('observacoes', values.observacoes);
     params.append('usuarioId', userId);
     params.append('idade', values.idade);
+    params.append('suplementos', suplementos);
+    */
 
-    MapaService.criaMapa(params)
+    
+    MapaService.criaMapa(json)
       .then((result) => {
         alert("Alteração gravada com sucesso");
         setLoading(false);
@@ -423,6 +633,16 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     
     
   });
+
+  const StyledTableCell = withStyles((theme) => ({
+    head: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+  }))(TableCell);
 
   return (
     <form
@@ -558,7 +778,109 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
                 </FormControl>
                 
                 </Grid>
-                
+                <Grid item md={12} xs={12}>
+                  <Card>
+                    <CardHeader title="Suplementação" ></CardHeader>
+                    <Divider />
+                    <CardContent>
+                      <Grid container spacing={3} direction="row">
+                        <Grid item md={12} xs={12}>
+                          {errorSup && 
+                          <Alert severity="error">{errorSup}</Alert>}
+                        </Grid>
+                        <Grid item md={4} xs={4}>
+                          <TextField
+                            fullWidth
+                            label="Suplemento"
+                            name="supId"
+                            required
+                            helperText="Informe o suplemento"
+                            onChange={handleSupChange}
+                            value={valueSup.supId}
+                            variant="outlined"
+                            select
+                            SelectProps={{ native: true }}
+                          >
+                            <option value={0}></option>
+                            {
+                              suplementos.map((option) =>(
+                                <option key={option.id} value={option.id}>{option.descricao}</option>
+                              ))
+                            }
+                          </TextField>
+                        </Grid>
+                        <Grid item md={8} xs={8}>
+                          <FormGroup row>
+                            {
+                              refeicoes.map((option) =>(
+                                <FormControlLabel
+                                  control={<Checkbox
+                                              color="primary"
+                                              key={option.refeicao}
+                                              id={option.refeicao}
+                                              name={"selecionado"}
+                                              checked={option.sel} 
+                                              onChange={handleRefeicaoCheck}/>}
+                                  label={option.refeicao} />
+                              ))
+                            }
+                          </FormGroup>
+                        </Grid>
+                        <Grid item md={4} xs={12}>
+                          <Button
+                            fullWidth
+                            color="primary"
+                            variant="contained"
+                            onClick={handleAddSuplemento}>
+                            Adicionar
+                          </Button>
+                        </Grid>
+                        <Grid item md={12} xs={12}>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <StyledTableCell width="20%">Suplemento</StyledTableCell>
+                                <StyledTableCell>Refeições</StyledTableCell>
+                                <StyledTableCell width="10%" align="center">Ações</StyledTableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {
+                                itensSup.length <= 0 ?
+                                  <TableRow>
+                                    <TableCell colSpan={3}>Não informado</TableCell>
+                                  </TableRow> : 
+                                    itensSup.map((m) => (
+                                      <TableRow id={m.suplemento.id}>
+                                        <TableCell>{m.suplemento.descricao}</TableCell>
+                                        <TableCell>
+                                          <Grid container spacing={1} direction="row">
+                                            
+                                              {m.refeicoes.map((r) => (
+                                                <Grid item md={2} xd={2}>
+                                                  {r.refeicao}
+                                                </Grid>
+                                              ))}
+                                            
+                                          </Grid>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                          <IconButton
+                                            title="Excluir refeição" color="primary"
+                                            onClick={(event) => handleDelete(m.suplemento.id)}>
+                                            <Delete />
+                                          </IconButton>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))
+                              } 
+                            </TableBody>
+                          </Table>
+                        </Grid>
+                      </Grid>  
+                    </CardContent>
+                  </Card>
+                </Grid>
                 <Grid
                   item
                   md={12}

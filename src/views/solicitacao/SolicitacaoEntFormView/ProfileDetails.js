@@ -129,7 +129,12 @@ const ProfileDetails = ({ className, ...rest }) => {
   });
 
   const handleSubmitPlantonistas = (() => {
-    navigate('/app/solicitacoesplantonista', {replcace: true});
+    let expires = (60*60);
+    setCookie('solicContratoSel',   values.contrato, {path: '/', maxAge: expires});
+    setCookie('solicUnidadeSel',    values.unidade,  {path: '/', maxAge: expires});
+    setCookie('solicClinicaSel',    values.clinica,  {path: '/', maxAge: expires});
+    setCookie('solicDataReferencia',values.dataReferencia, {path: '/', maxAge: expires});
+    navigate('/app/solicitacoesplantonista/' + values.contrato + "/" + values.unidade + "/" + values.dataReferencia, {replace: true});
   });
 
   return (

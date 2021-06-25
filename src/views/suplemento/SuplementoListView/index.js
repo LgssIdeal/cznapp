@@ -7,7 +7,6 @@ import {
 import Page from '../../../components/Page';
 import Results from './Results';
 import Toolbar from './Toolbar';
-import {useParams} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,10 +17,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SolicitacaoPlantonistaListView = () => {
-
-  let {contratoId, unidadeId, dataReferencia}  = useParams();
-
+const SuplementoListView = () => {
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState("");
   const [pageable, setPageable] = useState();  
@@ -29,16 +25,16 @@ const SolicitacaoPlantonistaListView = () => {
   return (
     <Page
       className={classes.root}
-      title="Tipos de Dieta"
+      title="Suplementos de dieta"
     >
       <Container maxWidth={false}>
-        <Toolbar contratoId={contratoId} unidadeId={unidadeId} dataReferencia={dataReferencia} />
+        <Toolbar />
         <Box mt={3}>
-          <Results pageable={pageable} contratoId={contratoId} unidadeId={unidadeId} dataReferencia={dataReferencia}/>
+          <Results pageable={pageable} />
         </Box>
       </Container>
     </Page>
   );
 };
 
-export default SolicitacaoPlantonistaListView;
+export default SuplementoListView;

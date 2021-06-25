@@ -25,18 +25,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = ({ className, contratoId, unidadeId, dataReferencia, ...rest }) => {
+const Toolbar = ({ className, clienteId, ...rest }) => {
   const classes = useStyles();
   
   const navigate = useNavigate();
 
   const handleClick = (() => {
-    var url = '/app/solicitacoesplantonista/' + contratoId + '/' + unidadeId + '/' + dataReferencia + '/' + 0;
-    navigate(url, {});
-  });
-
-  const handleGoBack = (() => {
-    var url = '/app/solicitacoes';
+    var url = '/app/suplementos/' + 0;
     navigate(url, {});
   });
 
@@ -49,31 +44,55 @@ const Toolbar = ({ className, contratoId, unidadeId, dataReferencia, ...rest }) 
         display="flex"
         justifyContent="flex-end"
       >
-        <Grid container spacing={3}>
-          <Grid item md={3} xs={6}>
+        <Grid
+            container
+            spacing={3}>
+          <Grid
+            item
+            md={6}
+            xs={12}>
             <Button
               color="primary"
               variant="contained"
               onClick={handleClick}
-              spacing={3}
-              fullWidth>
+              spacing={3}>
               Novo
-            </Button>
-          </Grid>
-          <Grid item md={3} xs={6}>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={handleGoBack}
-              spacing={3}
-              fullWidth>
-              Voltar
             </Button>
           </Grid>
         </Grid>
         
       </Box>
 
+      
+      
+      {
+        /*
+      <Box mt={3}>
+        <Card>
+          <CardContent>
+            <Box maxWidth={500}>
+              <TextField
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SvgIcon
+                        fontSize="small"
+                        color="action"
+                      >
+                        <SearchIcon />
+                      </SvgIcon>
+                    </InputAdornment>
+                  )
+                }}
+                placeholder="Localizar usuário"
+                variant="outlined"
+              />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+              */}
     </div>
   );
 };

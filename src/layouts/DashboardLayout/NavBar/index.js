@@ -32,7 +32,8 @@ import {
   Coffee as CoffeeIcon,
   Clipboard as ClipboardIcon,
   List as ListIcon,
-  ShoppingCart as ShoppingCartIcon
+  ShoppingCart as ShoppingCartIcon,
+  FilePlus as FilePlusIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 
@@ -62,6 +63,11 @@ const items = [
     href: '/app/tiposdieta',
     icon: TrelloIcon,
     title: 'Tipos de dieta'
+  },
+  {
+    href: '/app/suplementos',
+    icon: FilePlusIcon,
+    title: 'Suplementos'
   },
   {
     href: '/app/contratos',

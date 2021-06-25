@@ -18,14 +18,12 @@ import {
   LinearProgress
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import {Edit, Delete, PictureAsPdfOutlined} from '@material-ui/icons'
+import {Edit, Delete} from '@material-ui/icons'
 import { useNavigate } from 'react-router-dom';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
-import SolicitacaoPlantonistaService from '../../../services/SolicitacaoPlantonistaService';
+import SuplementoService from '../../../services/SuplementoService';
 import {Alert} from '@material-ui/lab';
-
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -34,11 +32,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, ...rest }) => {
+const Results = ({ className, pageable, ...rest }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
-  const [selectedSolIds, setSelectedSolIds] = useState([]);
-  const [limit, setLimit] = useState(20);
+  const [selectedSuplementoIds, setSelectedSuplementoIds] = useState([]);
+  const [limit, setLimit] = useState(5);
   const [page, setPage] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [isTokenExpired, setTokenExpired] = useState(false);
@@ -49,44 +47,36 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
   });
   const [reload, setReload] = useState(0);
 
-  const mapRef = new Map();
-  mapRef.set("DESJEJUM", "Desjejum");
-  mapRef.set("LANCHE_1", "Lanche 1");
-  mapRef.set("ALMOCO", "Almoço");
-  mapRef.set("LANCHE_2", "Lanche 2");
-  mapRef.set("JANTAR", "Jantar");
-  mapRef.set("CEIA", "Ceia");
-
   const handleSelectAll = (event) => {
-    let newSelectedSolIds;
+    let newSelectedSuplementoIds;
 
     if (event.target.checked) {
-      newSelectedSolIds = lpageable.content.map((sol) => sol.id);
+      newSelectedSuplementoIds = lpageable.content.map((suplemento) => suplemento.id);
     } else {
-      newSelectedSolIds = [];
+      newSelectedSuplementoIds = [];
     }
 
-    setSelectedSolIds(newSelectedSolIds);
+    setSelectedSuplementoIds(newSelectedSuplementoIds);
   };
 
   const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedSolIds.indexOf(id);
-    let newSelectedSolIds = [];
+    const selectedIndex = selectedSuplementoIds.indexOf(id);
+    let newSelectedSuplementoIds = [];
 
     if (selectedIndex === -1) {
-      newSelectedSolIds = newSelectedSolIds.concat(selectedSolIds, id);
+      newSelectedSuplementoIds = newSelectedSuplementoIds.concat(selectedSuplementoIds, id);
     } else if (selectedIndex === 0) {
-      newSelectedSolIds = newSelectedSolIds.concat(selectedSolIds.slice(1));
-    } else if (selectedIndex === selectedSolIds.length - 1) {
-      newSelectedSolIds = newSelectedSolIds.concat(selectedSolIds.slice(0, -1));
+      newSelectedSuplementoIds = newSelectedSuplementoIds.concat(selectedSuplementoIds.slice(1));
+    } else if (selectedIndex === selectedSuplementoIds.length - 1) {
+      newSelectedSuplementoIds = newSelectedSuplementoIds.concat(selectedSuplementoIds.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelectedSolIds = newSelectedSolIds.concat(
-        selectedSolIds.slice(0, selectedIndex),
-        selectedSolIds.slice(selectedIndex + 1)
+      newSelectedSuplementoIds = newSelectedSuplementoIds.concat(
+        selectedSuplementoIds.slice(0, selectedIndex),
+        selectedSuplementoIds.slice(selectedIndex + 1)
       );
     }
 
-    setSelectedSolIds(newSelectedSolIds);
+    setSelectedSuplementoIds(newSelectedSuplementoIds);
   };
 
   const handleLimitChange = (event) => {
@@ -97,26 +87,26 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
     setPage(newPage);
   };
 
-  const handleAlterSolicitacao = (solicitacaoId) => {
-    navigate('/app/solicitacoesplantonista/' + contratoId + '/' + unidadeId + '/' + dataReferencia + '/'+ solicitacaoId, {replace : true});
+  const handleAlterSuplemento = (suplementoId) => {
+    navigate('/app/suplementos/' + suplementoId, {replace : true});
   }
 
-  const handleDeleteSolicitacao = (solicitacaoId) => {
+  const handleDeleteSuplemento = (suplementoId) => {
 
     confirmAlert({
       title: 'Confirmação',
-      message: 'Deseja excluir a solicitacao?',
+      message: 'Deseja excluir o suplemento?',
       buttons: [
         {
           label:'Sim',
           onClick: () => {
 
-            SolicitacaoPlantonistaService.deleteSolicitacao(solicitacaoId)
+            SuplementoService.deleteSuplemento(suplementoId)
               .then((result) => {
                   
                 confirmAlert({
                   title: 'Informação',
-                  message: 'Solicitação excluida.',
+                  message: 'Suplemento excluído',
                   buttons: [
                     {
                       label: 'Ok',
@@ -132,15 +122,8 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
                 });
               })
               .catch((error) => {
-                console.log(error.response);
-                var err = JSON.stringify(error);
-                if(!err.includes("401")) {
-                  if(error.response.data) {
-                    setErrorMsg(error.response.data.detail);
-                  } else {
-                    setErrorMsg(err);
-                  }
-                  
+                if(error.data) {
+                  setErrorMsg(error.data);
                 } else {
                   setTokenExpired(true)
                 }
@@ -167,30 +150,15 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
     });
       
   }
-
-  const handleExportaPdf = (solicitacaoId) => {
-    setLoading(true);
-    SolicitacaoPlantonistaService.getPdf(solicitacaoId)
-      .then((result) => {
-        
-        const linkSource = result.data;
-        const downloadLink = document.createElement("a");
-        const fileName = "plantonista_" + contratoId + "_" + unidadeId + "_" + dataReferencia + ".pdf";
-        downloadLink.href = linkSource;
-        downloadLink.download = fileName;
-        downloadLink.click();
-
-      })
-      .catch((error) => {
-        setErrorMsg(JSON.stringify(error))
-      })
-      .finally(() => setLoading(false));
-  }
   
 
   useEffect(() => {
 
-    SolicitacaoPlantonistaService.getSolicitacoes(contratoId, unidadeId, dataReferencia, page + 1, limit)
+    if(JSON.parse(localStorage.getItem("@app-user")).perfil !== 'ADMINISTRADOR') {
+      navigate("/app/401", {}); 
+    }
+
+    SuplementoService.getSuplementos(page + 1, limit)
       .then((result) => {
         setLoading(false);
         setLpageable(result.data);
@@ -204,7 +172,7 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
         }
       });
 
-  }, [contratoId, unidadeId, dataReferencia, page, limit, reload]);
+  }, [page, limit, reload]);
 
   useEffect(() =>{
     if(isTokenExpired) {
@@ -237,73 +205,66 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
               <TableRow>
                 <StyledTableCell padding="checkbox">
                   <Checkbox
-                    checked={selectedSolIds.length === lpageable.content.length}
+                    checked={selectedSuplementoIds.length === lpageable.content.length}
                     color="primary"
                     indeterminate={
-                      selectedSolIds.length > 0
-                      && selectedSolIds.length < lpageable.content.length
+                      selectedSuplementoIds.length > 0
+                      && selectedSuplementoIds.length < lpageable.content.length
                     }
                     onChange={handleSelectAll}
                   />
                 </StyledTableCell>
                 <StyledTableCell>
-                  Data Solicitação
+                  Suplemento
                 </StyledTableCell>
                 <StyledTableCell>
-                  Data referência
+                  Dieta
                 </StyledTableCell>
                 <StyledTableCell>
-                  Usuário Solicitante
-                </StyledTableCell>
-                <StyledTableCell align="center">
                   Ações
                 </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {lpageable.content.slice(0, limit).map((sol) => (
+              {lpageable.content.slice(0, limit).map((suplemento) => (
                 <TableRow
                   hover
-                  key={sol.id}
-                  selected={selectedSolIds.indexOf(sol.id) !== -1}
+                  key={suplemento.id}
+                  selected={selectedSuplementoIds.indexOf(suplemento.id) !== -1}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedSolIds.indexOf(sol.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, sol.id)}
+                      checked={selectedSuplementoIds.indexOf(suplemento.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, suplemento.id)}
                       value="true"
                     />
                   </TableCell>
                   <TableCell>
-                    {format(
-                          zonedTimeToUtc(
-                            sol.dataSolicitacao, 
-                        'America/Sao_Paulo'), "dd/MM/yyyy HH:mm:ss")}
+                    <Box
+                      alignItems="center"
+                      display="flex"
+                    >
+                      <Typography
+                        color="textPrimary"
+                        variant="body1"
+                      >
+                        {suplemento.descricao}
+                      </Typography>
+                    </Box>
                   </TableCell>
                   <TableCell>
-                    {format(
-                          zonedTimeToUtc(
-                            sol.dataReferencia, 
-                        'America/Sao_Paulo'), "dd/MM/yyyy")}
+                    {suplemento.tipoDieta && suplemento.tipoDieta.sigla}
                   </TableCell>
                   <TableCell>
-                    {sol.usuarioSolicitacao && sol.usuarioSolicitacao.nome}
-                  </TableCell>
-                  <TableCell align="center">
                     <Typography>
                       <IconButton
-                        title="Exportar em pdf" color="primary"
-                        onClick={(event) => handleExportaPdf(sol.id)}>
-                          <PictureAsPdfOutlined />
-                      </IconButton>
-                      <IconButton
-                        title="Editar solicitação"
-                        onClick={(event) => handleAlterSolicitacao(sol.id)}>
+                        title="Editar suplemento"
+                        onClick={(event) => handleAlterSuplemento(suplemento.id)}>
                         <Edit color="primary" />
                       </IconButton>
                       <IconButton
-                        title="Excluir solicitacao" color="primary"
-                        onClick={(event) => handleDeleteSolicitacao(sol.id)}>
+                        title="Excluir suplemento" color="primary"
+                        onClick={(event) => handleDeleteSuplemento(suplemento.id)}>
                           <Delete />
                       </IconButton>
                     </Typography>

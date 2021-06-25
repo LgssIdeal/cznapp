@@ -17,19 +17,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MapaFormView = () => {
+const SuplementoFormView = () => {
+  let {suplementoId}  = useParams();
   const classes = useStyles();
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const[contratoSel, setContratoSel] = useState();
-  
-  let {clinicaId}  = useParams();
-  let {mapaId} = useParams();
 
   return (
     <Page
       className={classes.root}
-      title="Alteração mapa do paciente"
+      title="Cadastro de suplementos de dieta"
     >
       <Container maxWidth="lg">
         <Grid
@@ -38,11 +33,11 @@ const MapaFormView = () => {
         >
           <Grid
             item
-            lg={10}
-            md={10}
+            lg={8}
+            md={6}
             xs={12}
           >
-            <ProfileDetails clinicaId={clinicaId} mapaId={mapaId}/>
+            <ProfileDetails suplementoId={suplementoId}/>
           </Grid>
         </Grid>
       </Container>
@@ -50,4 +45,4 @@ const MapaFormView = () => {
   );
 };
 
-export default MapaFormView;
+export default SuplementoFormView;

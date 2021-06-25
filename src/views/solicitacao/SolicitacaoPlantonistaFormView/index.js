@@ -18,13 +18,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SolicitacaoPlantonistaFormView = () => {
-  let {solicitacaoId}  = useParams();
+  let {contratoId, unidadeId, dataReferencia, solicitacaoId}  = useParams();
   const classes = useStyles();
 
   return (
     <Page
       className={classes.root}
-      title="Cadastro da unidade"
+      title="Solicitações para plantonistas"
     >
       <Container maxWidth="lg">
         <Grid
@@ -37,7 +37,11 @@ const SolicitacaoPlantonistaFormView = () => {
             md={6}
             xs={12}
           >
-            <ProfileDetails solicitacaoId={solicitacaoId}/>
+            <ProfileDetails 
+              contratoId={contratoId}
+              unidadeId={unidadeId}
+              dataReferencia={dataReferencia}
+              solicitacaoId={solicitacaoId}/>
           </Grid>
         </Grid>
       </Container>

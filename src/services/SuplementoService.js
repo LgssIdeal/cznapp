@@ -8,14 +8,11 @@ const instance = axios.create( {
 });
 
 export default {
-  getSolicitacoes: (contratoId, unidadeId, dataReferencia, page, size) => 
+  getSuplementos: (page, size) => 
     instance({
       'method' : 'GET',
-      'url' : '/solicitacoesplantonista', 
+      'url' : '/suplementos', 
       'params' : {
-        'contratoId' : contratoId,
-        'unidadeId' : unidadeId,
-        'dataReferencia' : dataReferencia,
         'page' : page,
         'size' : size
       },
@@ -23,54 +20,37 @@ export default {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       },
     }),
-  getSolicitacoesList: () => 
+  getSuplementosList: () => 
     instance({
       'method' : 'GET',
-      'url' : '/solicitacoesplantonista',
+      'url' : '/suplementos',
       'headers' : {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       },
     }),
-  getSolicitacao: (solicitacaoId) =>
+  getSuplemento: (suplementoId) =>
     instance({
       'method' : 'GET',
-      'url' : '/solicitacoesplantonista/' + solicitacaoId,
+      'url' : '/suplementos/' + suplementoId,
       'headers' : {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
     }),
-  deleteSolicitacao: (solicitacaoId) =>
+  deleteSuplemento: (suplementoId) =>
     instance({
       'method' : 'DELETE',
-      'url' : '/solicitacoesplantonista/' + solicitacaoId,
+      'url' : '/suplementos/' + suplementoId,
       'headers' : {
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
     }),
-  criaSolicitacao: (data) =>
+  criaSuplemento: (data) =>
     instance({
       'method' : 'POST',
-      'url' : '/solicitacoesplantonista',
+      'url' : '/suplementos',
       'data' : data,
       'headers' : {
-        'Content-Type' : 'application/json',
         'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
       }
-    }),
-  getPdf: (solicitacaoId) =>
-    instance( {
-      'method': 'GET',
-      'url': '/solicitacoesplantonista/' + solicitacaoId + '/pdf',
-      'headers' : {
-        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
-      }
-    }),
-  getSolicitacaoItens: (solicitacaoId) =>
-    instance( {
-      'method': 'GET',
-      'url': '/solicitacoesplantonista/itens/' + solicitacaoId,
-      'headers' : {
-        'Authorization' : 'Bearer ' + (localStorage.getItem("@app-user") !== null ? JSON.parse(localStorage.getItem("@app-user")).jwtToken : '')
-      }
-    }),
+    })
 }
