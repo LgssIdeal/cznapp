@@ -165,8 +165,8 @@ const Results = ({ className, pageable, ...rest }) => {
       })
       .catch((error) => {
         setLoading(false);
-        if(error.data) {
-          setErrorMsg(error.data);
+        if(error.response.data) {
+          setErrorMsg(error.response.data.detail);
         } else {
           setTokenExpired(true)
         }
