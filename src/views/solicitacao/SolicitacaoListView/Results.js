@@ -25,7 +25,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import {useParams} from 'react-router-dom';
 import {Alert} from '@material-ui/lab';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
+import { zonedTimeToUtc, format, utcToZonedTime } from 'date-fns-tz';
 import SolicitacaoService from '../../../services/SolicitacaoService';
 
 const useStyles = makeStyles((theme) => ({
@@ -176,9 +176,9 @@ const Results = ({ className, pageable, contratoId, unidadeId, clinicaId, refeic
                   </TableCell>
                   <TableCell>
                   {format(
-                      zonedTimeToUtc(
+                      utcToZonedTime(
                         solicitacao.dataReferencia, 
-                        'America/Sao_Paulo'), "dd/MM/yyyy")}
+                        'UTC'), "dd/MM/yyyy")}
                   </TableCell>
                   <TableCell>
                     {map.get(solicitacao.refeicao)}

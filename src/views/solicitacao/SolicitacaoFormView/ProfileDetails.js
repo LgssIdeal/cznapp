@@ -30,7 +30,7 @@ import { withStyles } from '@material-ui/core/styles';
 import {Delete} from '@material-ui/icons'
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Alert} from '@material-ui/lab';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
+import { zonedTimeToUtc, format, utcToZonedTime } from 'date-fns-tz';
 import ClinicaService from '../../../services/ClinicaService';
 import ContratoService from '../../../services/ContratoService';
 import UnidadeService from '../../../services/UnidadeService';
@@ -485,9 +485,9 @@ const ProfileDetails = ({ className, contratoId, unidadeId, clinicaId, refeicao,
                                 checked={r.selecionado} 
                                 onChange={handleCheckRefeicao}/>}
                     label={map.get(r.refeicao) + ' ['  + format(
-                      zonedTimeToUtc(
+                      utcToZonedTime(
                       r.referencia, 
-                    'America/Sao_Paulo'), "dd/MM/yyyy") + ']'} />
+                    'UTC'), "dd/MM/yyyy") + ']'} />
                   ))
                 }
                 </FormGroup>

@@ -96,7 +96,7 @@ const Results = ({ className, ...rest }) => {
               values.licenca &&
                 <TableRow>
                   <TableCell>{"Produto"}</TableCell>
-                  <TableCell>{values.licenca.product.name}</TableCell>
+                  <TableCell>{values.licenca.produto.nome}</TableCell>
                 </TableRow>
                 
             }
@@ -104,7 +104,7 @@ const Results = ({ className, ...rest }) => {
               values.licenca &&
               <TableRow>
                 <TableCell>{"Licenciado para"}</TableCell>
-                <TableCell>{values.licenca.customer.customerName + " (" + values.licenca.customer.document + ")"}</TableCell>
+                <TableCell>{values.licenca.cliente.nomeRazao + " (" + values.licenca.cliente.documento + ")"}</TableCell>
               </TableRow>
             }
             {
@@ -112,7 +112,7 @@ const Results = ({ className, ...rest }) => {
               <TableRow>
                 <TableCell>{"Expira em"}</TableCell>
                 <TableCell>
-                    {format(zonedTimeToUtc(values.licenca.expirationDate, 'America/Sao_Paulo'), "dd/MM/yyyy HH:mm:ss")}
+                    {format(zonedTimeToUtc(values.licenca.dataExpiracao, 'America/Sao_Paulo'), "dd/MM/yyyy HH:mm:ss")}
                 </TableCell>
               </TableRow>
             }
@@ -120,8 +120,8 @@ const Results = ({ className, ...rest }) => {
             values.licenca && 
             values.licenca.infos.map((info) => (
                 <TableRow key={info.id}>
-                  <TableCell>{info.descKeyInfo}</TableCell>
-                  <TableCell>{info.value}</TableCell>
+                  <TableCell>{info.descricaoChaveInfo}</TableCell>
+                  <TableCell>{info.valor}</TableCell>
                 </TableRow>
               )
             )

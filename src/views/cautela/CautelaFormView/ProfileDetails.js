@@ -131,8 +131,10 @@ const ProfileDetails = ({ className, cautelaId, ...rest }) => {
       },
       itens: itens
     }
-    
+    console.log(values.dataReferencia);
     const json = JSON.stringify(data);
+
+    console.log(data);
         
     CautelaService.criaCautela(json)
       .then(() => {

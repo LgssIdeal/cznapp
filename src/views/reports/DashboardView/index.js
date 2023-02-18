@@ -32,6 +32,7 @@ const Dashboard = () => {
       title="Dashboard"
     >
       <Container maxWidth={false}>
+        {/*
         <Grid
           container
           spacing={3}
@@ -109,6 +110,7 @@ const Dashboard = () => {
             <LatestOrders />
           </Grid>
         </Grid>
+         */}
       </Container>
     </Page>
   );
