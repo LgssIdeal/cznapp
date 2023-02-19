@@ -115,7 +115,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     tiposDietaComplementarAcomp: [],
     dieta: '',
     observacoes: '',
-    idade: ''
+    dataNascimento: '',
+    identificacao: ''
   });
 
   const userId = JSON.parse(localStorage.getItem("@app-user")).id;
@@ -132,7 +133,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     tiposDietaComplementarAcomp: [],
     dieta: '',
     observacoes: '',
-    idade: ''
+    dataNascimento: '',
+    identificacao: ''
   });
 
   const [valueSup, setValueSup] = useState({
@@ -168,8 +170,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
     if(mapaId !== "0") {
       MapaService.getMapa(mapaId)
       .then((result) => {
-        // grava o retorno do serviço para setar os campos
+        // grava o retorno do serviço para setar os campos  moment(contratoSel.vigenciaInicial).format("YYYY-MM-DD");
         setMapaSel(result.data);
+
+        setMapaSel({
+          ...values,
+          dataNascimento: moment(result.data.dataNascimento).format("YYYY-MM-DD")
+        })
 
         // lógica para montar a tabela de suplementos
         if(result.data.suplementos) {
@@ -206,7 +213,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
           tiposDietaComplementarAcomp: [],
           dieta: '',
           observacoes: '',
-          idade: ''
+          dataNascimento: '',
+          identificacao: ''
         });
 
           
@@ -231,7 +239,8 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       tiposDietaComplementarAcomp: mapaSel.tiposDietaComplementarAcomp.length > 0 ? mapaSel.tiposDietaComplementarAcomp : [],
       dieta: mapaSel.dieta,
       observacoes: mapaSel.observacoes,
-      idade: mapaSel.idade
+      dataNascimento: mapaSel.dataNascimento,
+      identificacao: mapaSel.identificacao
     });
 
     TipoDietaService.getTiposDietaList()
@@ -587,29 +596,13 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
       tiposDietaComplementarAcompId: tpCompAcompSel,
       observacoes: values.observacoes,
       usuarioId: userId,
-      idade: values.idade,
+      dataNascimento: values.dataNascimento,
+      identificacao: values.identificacao,
       suplementos: suplementos
     };
 
     const json = JSON.stringify(requestData);
 
-
-
-    /*
-    const params = new URLSearchParams();
-    params.append('mapaId', values.id);
-    params.append('clinicaId', values.clinica);
-    params.append('leito', values.leito);
-    params.append('paciente', values.paciente);
-    params.append('tipoDietaId', values.tipoDieta);
-    params.append('tiposDietaComplemetarId', tpCompSel);
-    params.append('tipoDietaAcompId', values.tipoDietaAcomp);
-    params.append('tiposDietaComplementarAcompId', tpCompAcompSel);
-    params.append('observacoes', values.observacoes);
-    params.append('usuarioId', userId);
-    params.append('idade', values.idade);
-    params.append('suplementos', suplementos);
-    */
 
     
     MapaService.criaMapa(json)
@@ -709,12 +702,31 @@ const ProfileDetails = ({ className, clinicaId, mapaId, ...rest }) => {
               
               <TextField
                 fullWidth
-                
-                name="idade"
-                helperText="Informe a idade do paciente"
+                type="date"
+                name="dataNascimento"
+                helperText="Informe a data e nascimento do paciente"
                 onChange={handleChange}
                 required
-                value={values.idade}
+                value={values.dataNascimento}
+                variant="outlined"
+              >
+              </TextField>  
+            </Grid>
+
+            <Grid
+              item
+              md={3}
+              xs={12}
+            >
+              
+              <TextField
+                fullWidth
+                
+                name="identificacao"
+                helperText="Informe o nro do prontuário"
+                onChange={handleChange}
+                required
+                value={values.identificacao}
                 variant="outlined"
               >
               </TextField>  

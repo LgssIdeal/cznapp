@@ -27,7 +27,7 @@ import MapaService from '../../../services/MapaService';
 import ClinicaService from '../../../services/ClinicaService';
 import {useParams} from 'react-router-dom';
 import {Alert} from '@material-ui/lab';
-import { zonedTimeToUtc, format } from 'date-fns-tz';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -192,7 +192,10 @@ const Results = ({ className, pageable, ...rest }) => {
                   Paciente
                 </StyledTableCell>
                 <StyledTableCell>
-                  Idade
+                  Data Nascimento
+                </StyledTableCell>
+                <StyledTableCell>
+                  Prontuário
                 </StyledTableCell>
                 <StyledTableCell>
                   Dieta
@@ -236,7 +239,10 @@ const Results = ({ className, pageable, ...rest }) => {
                     {mapa.paciente}
                   </TableCell>
                   <TableCell>
-                    {mapa.idade}
+                    {moment(mapa.dataNascimento).format("DD/MM/YYYY")}
+                  </TableCell>
+                  <TableCell>
+                    {mapa.identificacao}
                   </TableCell>
                   <TableCell>
                     {mapa.dieta}
