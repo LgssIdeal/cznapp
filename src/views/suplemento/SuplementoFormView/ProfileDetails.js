@@ -49,7 +49,7 @@ const ProfileDetails = ({ className, suplementoId, ...rest }) => {
     },
     {
       id: 2,
-      descricao: 'Lanche 1',
+      descricao: 'Colação',
       chave: 'LANCHE_1'
     },
     {
@@ -59,7 +59,7 @@ const ProfileDetails = ({ className, suplementoId, ...rest }) => {
     },
     {
       id: 4,
-      descricao: 'Lanche 2',
+      descricao: 'Lanche tarde',
       chave: 'LANCHE_2'
     },
     {

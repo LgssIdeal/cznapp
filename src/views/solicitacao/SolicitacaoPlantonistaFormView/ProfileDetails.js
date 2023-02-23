@@ -63,7 +63,7 @@ const ProfileDetails = ({ className, contratoId, unidadeId, dataReferencia, soli
     {
       id: 2,
       key: 'LANCHE_1',
-      value: 'Lanche 1'
+      value: 'Colação'
     },
     {
       id: 3,
@@ -73,7 +73,7 @@ const ProfileDetails = ({ className, contratoId, unidadeId, dataReferencia, soli
     {
       id: 4,
       key: 'LANCHE_2',
-      value: 'Lanche 2'
+      value: 'Lanche tarde'
     },
     {
       id: 5,

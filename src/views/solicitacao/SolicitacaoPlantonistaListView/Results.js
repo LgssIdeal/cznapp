@@ -51,9 +51,9 @@ const Results = ({ className, contratoId, unidadeId, dataReferencia, pageable, .
 
   const mapRef = new Map();
   mapRef.set("DESJEJUM", "Desjejum");
-  mapRef.set("LANCHE_1", "Lanche 1");
+  mapRef.set("LANCHE_1", "Colação");
   mapRef.set("ALMOCO", "Almoço");
-  mapRef.set("LANCHE_2", "Lanche 2");
+  mapRef.set("LANCHE_2", "Lanche tarde");
   mapRef.set("JANTAR", "Jantar");
   mapRef.set("CEIA", "Ceia");
 

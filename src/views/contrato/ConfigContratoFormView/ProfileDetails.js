@@ -126,9 +126,9 @@ const ProfileDetails = ({ className, contratoId, ...rest }) => {
 
   const map = new Map();
   map.set("DESJEJUM", "Desjejum");
-  map.set("LANCHE_1", "Lanche 1");
+  map.set("LANCHE_1", "Colação");
   map.set("ALMOCO", "Almoço");
-  map.set("LANCHE_2", "Lanche 2");
+  map.set("LANCHE_2", "Lanche tarde");
   map.set("JANTAR", "Jantar");
   map.set("CEIA", "Ceia");
 

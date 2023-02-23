@@ -9,7 +9,7 @@ export default [
     },
     {
         id: "LANCHE_1",
-        value: "Lanche 1"
+        value: "Colação"
     },
     {
         id: "ALMOCO",
@@ -17,7 +17,7 @@ export default [
     },
     {
         id: "LANCHE_2",
-        value: "Lanche 2"
+        value: "Lanche tarde"
     },
     {
         id: "JANTAR",
